@@ -50,6 +50,28 @@ public class WordSearchTester {
 
 	@Test
 	/**
+	 *  Verifies that search works correctly in a tiny grid that is effectively 2D.
+	 */
+	public void testSearchHarder1 () {
+		// Note: this grid is 1x2x2 in size
+		final char[][][] grid = new char[][][] {{{'c','a','t'},{'z','a','b'},{'e','z','c'}},
+                                                {{'d','e','f'},{'z','e','g'},{'h','i','j'}},
+                                                {{'k','l','b'},{'z','m','n'},{'o','p','q'}}};
+		final int[][] location = _wordSearch.search(grid, "cat");
+		assertNotNull(location);
+		assertArrayEquals(location, new int[][]{{0,0,0},{0,0,1},{0,0,2}});
+        final int[][] location2 = _wordSearch.search(grid, "bee");
+        assertNotNull(location2);
+        assertArrayEquals(location2, new int[][]{{2,0,2},{1,1,1},{0,2,0}});
+        final int[][] location3 = _wordSearch.search(grid, "zzz");
+        assertNotNull(location3);
+        assertArrayEquals(location3, new int[][]{{0,1,0},{1,1,0},{2,1,0}});
+        final int[][] location4 = _wordSearch.search(grid, "cats");
+        assertNull(location4);
+	}
+
+	@Test
+	/**
 	 * Verifies that make can generate a grid when it's *necessary* for words to share
 	 * some common letter locations.
 	 */

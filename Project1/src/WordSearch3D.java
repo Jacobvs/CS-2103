@@ -52,15 +52,16 @@ public class WordSearch3D {
             for (int j = bounds[2]; j <= bounds[3]; j++) {
                 for (int k = bounds[4]; k <= bounds[5]; k++) {
                     try {
-                        char c = grid[x + i][y + j][z + k];
-                        if (word.charAt(1) == c) {
-                            int[][] points = checkForWord(grid, x, y, z, i, j, k, word);
-                            if (points != null)
-                                return points;
+                        if(!(i==0 & j==0 && k==0)) {
+                            char c = grid[x + i][y + j][z + k];
+                            if (word.charAt(1) == c) {
+                                int[][] points = checkForWord(grid, x, y, z, i, j, k, word);
+                                if (points != null)
+                                    return points;
+                            }
                         }
                     }
-                    catch (ArrayIndexOutOfBoundsException e){
-                        System.out.println("Out of bounds: " + e.getMessage());
+                    catch(ArrayIndexOutOfBoundsException e){
                     }
                 }
             }
@@ -80,7 +81,6 @@ public class WordSearch3D {
                 }
             }
             catch(ArrayIndexOutOfBoundsException e){
-                System.out.println("Out of bounds: " + e.getMessage());
                 return null;
             }
         }
@@ -92,32 +92,14 @@ public class WordSearch3D {
     // yUpperBound: -1 or 0, yLowerBound 0 or 1 **both cannot be 0
     // zLeftBound: -1 or 0, zRightBound 0 or 1 **both cannot be 0
     public int[] checkBounds(char[][][] grid, int xPos, int yPos, int zPos) {
+        int xLeftBound, xRightBound, yUpperBound, yLowerBound, zLeftBound, zRightBound;
 
-        int xLeftBound = -1, xRightBound = 1, yUpperBound = -1, yLowerBound = 1, zLeftBound = -1, zRightBound = 1;
-
-        if (xPos == 0) {
-            xLeftBound = 0;
-        } else {
-            if (xPos == grid.length) {
-                xRightBound = 0;
-            }
-        }
-
-        if (yPos == 0) {
-            yUpperBound = 0;
-        } else {
-            if (yPos == grid[0].length) {
-                yLowerBound = 0;
-            }
-        }
-
-        if (zPos == 0) {
-            zLeftBound = 0;
-        } else {
-            if (zPos == grid[0][0].length) {
-                zRightBound = 0;
-            }
-        }
+        xLeftBound = (xPos == 0) ? 0 : -1;
+        xRightBound = (xPos == grid.length) ? 0 : 1;
+        yUpperBound = (yPos == 0) ? 0: -1;
+        yLowerBound = (yPos == grid[0].length) ? 0 : 1;
+        zLeftBound = (zPos == 0) ? 0 : -1;
+        zRightBound = (zPos == grid[0][0].length) ? 0 : 1;
 
         return new int[] {xLeftBound, xRightBound, yUpperBound, yLowerBound, zLeftBound, zRightBound};
     }
