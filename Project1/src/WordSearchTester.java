@@ -1,6 +1,8 @@
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 import static org.junit.Assert.*;
 
 /**
@@ -11,6 +13,106 @@ public class WordSearchTester {
 
 	@Test
 	/**
+	 *  Verifies that search works correctly in a tiny grid that is effectively 2D.
+	 */
+	public void testSearchSimple () {
+		// Note: this grid is 1x2x2 in size
+		final char[][][] grid = new char[][][] { { { 'a', 'b', 'c' },
+				{ 'd', 'f', 'e' } } };
+		final int[][] location = _wordSearch.search(grid, "be");
+		assertNotNull(location);
+		assertEquals(location[0][0], 0);
+		assertEquals(location[0][1], 0);
+		assertEquals(location[0][2], 1);
+		assertEquals(location[1][0], 0);
+		assertEquals(location[1][1], 1);
+		assertEquals(location[1][2], 2);
+	}
+
+	@Test
+	/**
+	 *  Verifies that search works correctly in a tiny grid that is effectively 2D.
+	 */
+	public void testSearch3dWord () {
+		// Note: this grid is 1x2x2 in size
+		final char[][][] grid = new char[][][] {{{'c','a','t'},{'z','a','b'},{'e','z','c'}},
+				{{'d','e','f'},{'z','e','g'},{'h','i','j'}},
+				{{'k','l','b'},{'z','m','n'},{'o','p','q'}}};
+		final int[][] location = _wordSearch.search(grid, "cat");
+		assertNotNull(location);
+		assertArrayEquals(location, new int[][]{{0,0,0},{0,0,1},{0,0,2}});
+	}
+
+	@Test
+	/**
+	 *  Verifies that search works correctly in a tiny grid that is effectively 2D.
+	 */
+	public void testSearch3dWordRepeating () {
+		// Note: this grid is 1x2x2 in size
+		final char[][][] grid = new char[][][] {{{'c','a','t'},{'z','a','b'},{'e','z','c'}},
+				{{'d','e','f'},{'z','e','g'},{'h','i','j'}},
+				{{'k','l','b'},{'z','m','n'},{'o','p','q'}}};
+		final int[][] location = _wordSearch.search(grid, "bee");
+		assertNotNull(location);
+		assertArrayEquals(location, new int[][]{{2,0,2},{1,1,1},{0,2,0}});
+	}
+
+	@Test
+	/**
+	 *  Verifies that search works correctly in a tiny grid that is effectively 2D.
+	 */
+	public void testSearch3dSameLetters () {
+		// Note: this grid is 1x2x2 in size
+		final char[][][] grid = new char[][][] {{{'c','a','t'},{'z','a','b'},{'e','z','c'}},
+				{{'d','e','f'},{'z','e','g'},{'h','i','j'}},
+				{{'k','l','b'},{'z','m','n'},{'o','p','q'}}};
+		final int[][] location = _wordSearch.search(grid, "zzz");
+		assertNotNull(location);
+		assertArrayEquals(location, new int[][]{{0,1,0},{1,1,0},{2,1,0}});
+	}
+
+	@Test
+	/**
+	 *  Verifies that search works correctly in a tiny grid that is effectively 2D.
+	 */
+	public void testSearch3dLongWord () {
+		// Note: this grid is 1x2x2 in size
+		final char[][][] grid = new char[][][] {{{'c','a','t'},{'z','a','b'},{'e','z','c'}},
+				{{'d','e','f'},{'z','e','g'},{'h','i','j'}},
+				{{'k','l','b'},{'z','m','n'},{'o','p','q'}}};
+		final int[][] location = _wordSearch.search(grid, "cats");
+		assertNull(location);
+	}
+
+	@Test
+	/**
+	 *  Verifies that search works correctly in a tiny grid that is effectively 2D.
+	 */
+	public void testSearch3dEmptyWord () {
+		// Note: this grid is 1x2x2 in size
+		final char[][][] grid = new char[][][] {{{'c','a','t'},{'z','a','b'},{'e','z','c'}},
+				{{'d','e','f'},{'z','e','g'},{'h','i','j'}},
+				{{'k','l','b'},{'z','m','n'},{'o','p','q'}}};
+		final int[][] location = _wordSearch.search(grid, "");
+		assertNull(location);
+	}
+
+	@Test
+	/**
+	 *  Verifies that search works correctly in a tiny grid that is effectively 2D.
+	 */
+	public void testSearch3dOneLetterWord () {
+		// Note: this grid is 1x2x2 in size
+		final char[][][] grid = new char[][][] {{{'c','a','t'},{'z','a','b'},{'e','z','c'}},
+				{{'d','e','f'},{'z','e','g'},{'h','i','j'}},
+				{{'k','l','b'},{'z','m','n'},{'o','p','q'}}};
+		final int[][] location = _wordSearch.search(grid, "j");
+		assertNotNull(location);
+		assertArrayEquals(location, new int[][]{{1,2,2}});
+	}
+
+	@Test
+	/**
 	 * Verifies that make can generate a very simple puzzle that is effectively 1d.
 	 */
 	public void testMake1D () {
@@ -18,6 +120,7 @@ public class WordSearchTester {
 		// Solution is either java or avaj
 		final char[][][] grid = _wordSearch.make(words, 1, 1, 4);
 		final char[] row = grid[0][0];
+        System.out.println(Arrays.deepToString(grid));
 		assertTrue((row[0] == 'j' && row[1] == 'a' && row[2] == 'v' && row[3] == 'a') ||
 		           (row[3] == 'j' && row[2] == 'a' && row[1] == 'v' && row[0] == 'a'));
 	}
@@ -30,45 +133,6 @@ public class WordSearchTester {
 		// TODO: implement me
 	}
 
-	@Test
-	/**
-	 *  Verifies that search works correctly in a tiny grid that is effectively 2D.
-	 */
-	public void testSearchSimple () {
-			// Note: this grid is 1x2x2 in size
-			final char[][][] grid = new char[][][] { { { 'a', 'b', 'c' },
-													   { 'd', 'f', 'e' } } };
-			final int[][] location = _wordSearch.search(grid, "be");
-			assertNotNull(location);
-			assertEquals(location[0][0], 0);
-			assertEquals(location[0][1], 0);
-			assertEquals(location[0][2], 1);
-			assertEquals(location[1][0], 0);
-			assertEquals(location[1][1], 1);
-			assertEquals(location[1][2], 2);
-        }
-
-	@Test
-	/**
-	 *  Verifies that search works correctly in a tiny grid that is effectively 2D.
-	 */
-	public void testSearchHarder1 () {
-		// Note: this grid is 1x2x2 in size
-		final char[][][] grid = new char[][][] {{{'c','a','t'},{'z','a','b'},{'e','z','c'}},
-                                                {{'d','e','f'},{'z','e','g'},{'h','i','j'}},
-                                                {{'k','l','b'},{'z','m','n'},{'o','p','q'}}};
-		final int[][] location = _wordSearch.search(grid, "cat");
-		assertNotNull(location);
-		assertArrayEquals(location, new int[][]{{0,0,0},{0,0,1},{0,0,2}});
-        final int[][] location2 = _wordSearch.search(grid, "bee");
-        assertNotNull(location2);
-        assertArrayEquals(location2, new int[][]{{2,0,2},{1,1,1},{0,2,0}});
-        final int[][] location3 = _wordSearch.search(grid, "zzz");
-        assertNotNull(location3);
-        assertArrayEquals(location3, new int[][]{{0,1,0},{1,1,0},{2,1,0}});
-        final int[][] location4 = _wordSearch.search(grid, "cats");
-        assertNull(location4);
-	}
 
 	@Test
 	/**
