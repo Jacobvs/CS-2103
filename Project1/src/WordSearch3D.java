@@ -144,7 +144,7 @@ public class WordSearch3D {
      * no satisfying grid could be found.
      */
     public char[][][] make(String[] words, int sizeX, int sizeY, int sizeZ) {
-        char[][][] board = new char[sizeX][sizeY][sizeZ];
+        char[][][] board = new char[sizeX][sizeY][sizeZ]; //make new board
         ArrayList<String> wordsToPlace = new ArrayList<>(Arrays.asList(words));
 
         for (int i = 1; i < 1000; i++) {
