@@ -115,10 +115,20 @@ public class WordSearch3D {
         return points;
     }
 
-    //Method will set 6 variables used to control for loops in checkSurroundingPairs method
-    // xLeftBound: -1 or 0, xRightBound: 0 or 1 **both cannot be 0
-    // yUpperBound: -1 or 0, yLowerBound 0 or 1 **both cannot be 0
-    // zLeftBound: -1 or 0, zRightBound 0 or 1 **both cannot be 0
+    /**
+     * Given the grid, x, y and z coordinates, initialize for loop control variables to avoid IOB errors.
+     * For loop control variables will be returned as an array of 6 integers.
+     * These control variables will be used in the method "checkSurroundingChars"
+     * @param grid the grid of characters containing word search puzzle
+     * @param xPos x coordinate of desired character
+     * @param yPos y coordinate of desired character
+     * @param zPos z coordinate of desired character
+     * @return Integer array containing 6 loop control variables (key below)
+     *    Key for control variables
+     *     - bounds[0] -> xLeftBound: -1 or 0, bounds[1] -> xRightBound: 0 or 1 **both cannot be 0
+     *     - bounds[2] -> yUpperBound: -1 or 0, bounds[3] -> yLowerBound 0 or 1 **both cannot be 0
+     *     - bounds[4] -> zLeftBound: -1 or 0, bounds[5] -> zRightBound 0 or 1 **both cannot be 0
+     */
     public int[] checkBounds(char[][][] grid, int xPos, int yPos, int zPos) {
         int xLeftBound, xRightBound, yUpperBound, yLowerBound, zLeftBound, zRightBound;
 
@@ -135,7 +145,6 @@ public class WordSearch3D {
     /**
      * Tries to create a word search puzzle of the specified size with the specified
      * list of words.
-     *
      * @param words the list of words to embed in the grid
      * @param sizeX size of the grid along first dimension
      * @param sizeY size of the grid along second dimension
@@ -179,6 +188,15 @@ public class WordSearch3D {
         return null;
     }
 
+    /**
+     * Tries to place a word by giving the word a random starting location and starting direction.
+     * If the word will not fit with this information try again with a new location and direction.
+     * Do this up to 1000 times
+     * If it does this, it counts as one attempt and the method repeats this up to 1000 times
+     * @param board The board representing the word search that is being made before the word is added
+     * @param word The word that will be inserted into the boar
+     * @return
+     */
     public char[][][] placeWord(char[][][] board, String word) {
 
         for (int i = 0; i < 1000; i++) {
@@ -214,6 +232,12 @@ public class WordSearch3D {
         return null;
     }
 
+    /**
+     * Takes a partially complete board and fills the empty spaces with random characters
+     * @param board Board representing the word search. This inputted board will contain the inserted words,
+     *              but no random/unnecessary characters
+     * @return Returns the inputted board with spaces filled by random characters.
+     */
     public char[][][] fillBlankSpace(char[][][] board){
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {

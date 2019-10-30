@@ -5,6 +5,14 @@ import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
+/*
+ 1. Provided
+ 2. Middle
+ 3. Left Edge
+ 4. In corner
+ 5. No word
+ */
+
 /**
  * Code to test <tt>WordSearch3D</tt>.
  */
