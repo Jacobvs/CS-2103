@@ -21,7 +21,7 @@ public class WordSearch3D {
      */
     public int[][][] searchForAll(char[][][] grid, String[] words) {
         final int[][][] locations = new int[words.length][][];
-        for (int i = 0; i < words.length; i++) {
+        for (int i = 0; i < words.length; i++) { // Using search method for each word we are searching for, adding cords to array
             locations[i] = search(grid, words[i]);
         }
         return locations;
@@ -42,10 +42,10 @@ public class WordSearch3D {
             for (int j = 0; j < grid[i].length; j++) {
                 for (int k = 0; k < grid[i][j].length; k++) { // Tri-nested loop to traverse the 3d Array
                     if (grid[i][j][k] == word.charAt(0)) { // If current loc = first letter of word,
-                        if(word.length() == 1)
+                        if(word.length() == 1) // Accounting for if the word is one character long
                             return new int[][]{{i,j,k}};
-                        int[][] points = checkSurroundingChars(grid, i, j, k, word); // check to see if
-                        if (points != null)
+                        int[][] points = checkSurroundingChars(grid, i, j, k, word); //
+                        if (points != null) // Returns the array of points, if null (word isn't placed), it is not returned
                             return points;
                     }
                 }
@@ -66,13 +66,13 @@ public class WordSearch3D {
     private int[][] checkSurroundingChars(char[][][] grid, int x, int y, int z, String word) {
         int[] bounds = checkBounds(grid, x, y, z);
         for (int i = bounds[0]; i <= bounds[1]; i++) {
-            for (int j = bounds[2]; j <= bounds[3]; j++) {
-                for (int k = bounds[4]; k <= bounds[5]; k++) {
+            for (int j = bounds[2]; j <= bounds[3]; j++) {     // Tri-nested for loop checking
+                for (int k = bounds[4]; k <= bounds[5]; k++) { // 3D space around char (excluding bounds)
                     try {
-                        if (!(i == 0 & j == 0 && k == 0)) {
-                            char c = grid[x + i][y + j][z + k];
-                            if (word.charAt(1) == c) {
-                                int[][] points = checkForWord(grid, x, y, z, i, j, k, word);
+                        if (!(i == 0 & j == 0 && k == 0)) { // Excludes the already selected char from 3x3x3 search
+                            char c = grid[x + i][y + j][z + k]; // Sets temporary char as the char at current x,y,z (relative to pos)
+                            if (word.charAt(1) == c) { // If char is the next character we are looking for
+                                int[][] points = checkForWord(grid, x, y, z, i, j, k, word); // Initialize points to set of coordinates
                                 if (points != null)
                                     return points;
                             }
@@ -102,11 +102,11 @@ public class WordSearch3D {
         int[][] points = new int[word.length()][3];
         for (int i = 0; i < word.length(); i++) {
             try {
-                char c = grid[x + (i * deltaX)][y + (i * deltaY)][z + (i * deltaZ)];
+                char c = grid[x + (i * deltaX)][y + (i * deltaY)][z + (i * deltaZ)]; // Checks if next characters in sequence are correct
                 if (c != word.charAt(i)) {
-                    return null;
+                    return null; // Search stops whenever one of the chars does not match
                 } else {
-                    points[i] = new int[]{x + (i * deltaX), y + (i * deltaY), z + (i * deltaZ)};
+                    points[i] = new int[]{x + (i * deltaX), y + (i * deltaY), z + (i * deltaZ)}; // Adds coordinates of correct char to array
                 }
             } catch (ArrayIndexOutOfBoundsException e) {
                 return null;
@@ -132,14 +132,14 @@ public class WordSearch3D {
     public int[] checkBounds(char[][][] grid, int xPos, int yPos, int zPos) {
         int xLeftBound, xRightBound, yUpperBound, yLowerBound, zLeftBound, zRightBound;
 
-        xLeftBound = (xPos == 0) ? 0 : -1;
+        xLeftBound = (xPos == 0) ? 0 : -1; // Next 6 lines initialize control variables to proper values
         xRightBound = (xPos == grid.length) ? 0 : 1;
         yUpperBound = (yPos == 0) ? 0 : -1;
         yLowerBound = (yPos == grid[0].length) ? 0 : 1;
         zLeftBound = (zPos == 0) ? 0 : -1;
         zRightBound = (zPos == grid[0][0].length) ? 0 : 1;
 
-        return new int[]{xLeftBound, xRightBound, yUpperBound, yLowerBound, zLeftBound, zRightBound};
+        return new int[]{xLeftBound, xRightBound, yUpperBound, yLowerBound, zLeftBound, zRightBound}; // Returns array of variables values
     }
 
     /**
@@ -158,13 +158,13 @@ public class WordSearch3D {
 
         for (int i = 1; i < 1000; i++) { // 1000 tries to make a completed board
             while(true){
-                int w = new Random().nextInt(wordsToPlace.size());
-                String word = wordsToPlace.get(w);
+                int w = new Random().nextInt(wordsToPlace.size()); // Random index of the words list
+                String word = wordsToPlace.get(w);     // This will insert a random word in list, not just the first one
 
-                board = placeWord(board, word);
+                board = placeWord(board, word); // Sets board to a new board that has the word placed
                 System.out.println(Arrays.deepToString(board));
                 if(board != null){
-                    if(wordsToPlace.size() == 1) {
+                    if(wordsToPlace.size() == 1) { // If there is one more word in list
                         System.out.println("Completed board:");
                         System.out.println(Arrays.deepToString(board));
                         System.out.println("Filled board:");
@@ -172,10 +172,10 @@ public class WordSearch3D {
                         System.out.println(Arrays.deepToString(board));
                         return board;
                     }
-                    else if(checkFullBoard(board))
+                    else if(checkFullBoard(board)) // if board is full
                         return null;
                     else
-                        wordsToPlace.remove(w);
+                        wordsToPlace.remove(w); // Removes word at index w from ArrayList
                 }
                 else
                     break;
@@ -183,11 +183,10 @@ public class WordSearch3D {
 
             System.out.println("Reset Board");
             System.out.println("Board attempts: " + i);
-            board = new char[sizeX][sizeY][sizeZ];
-            wordsToPlace = new ArrayList<>(Arrays.asList(words));
+            board = new char[sizeX][sizeY][sizeZ]; // Resetting the board if no placement can be found
+            wordsToPlace = new ArrayList<>(Arrays.asList(words)); // Resetting ArrayList containing words that need to be placed
 
         }
-
         return null;
     }
 
@@ -204,12 +203,12 @@ public class WordSearch3D {
         for (int i = 0; i < 1000; i++) {
             int x = 0, y = 0, z = 0;
             while (board[x][y][z] != '\0') {
-                x = new Random().nextInt(board.length);
-                y = new Random().nextInt(board[0].length);
-                z = new Random().nextInt(board[0][0].length);
+                x = new Random().nextInt(board.length); // Finding random x coordinate
+                y = new Random().nextInt(board[0].length); // Finding random y coordinate
+                z = new Random().nextInt(board[0][0].length); // Finding random z coordinate
             }
             int dX = 0, dY = 0, dZ = 0;
-            while (dX == 0 && dY == 0 && dZ == 0) {
+            while (dX == 0 && dY == 0 && dZ == 0) { // Finds a random direction using delta x, y and z (which cannot all be 0)
                 dX = new Random().nextInt(3) - 1;
                 dY = new Random().nextInt(3) - 1;
                 dZ = new Random().nextInt(3) - 1;
@@ -217,12 +216,12 @@ public class WordSearch3D {
 
             for (int j = 0; j < word.length(); j++) { // Check if there's space for the word
                 try {
-                    char c = board[x + (j * dX)][y + (j * dY)][z + (j * dZ)];
+                    char c = board[x + (j * dX)][y + (j * dY)][z + (j * dZ)]; // Sets c to char at index of original cords + delta for x,y,z
                     if (c != '\0' && c != word.charAt(j)) {
                         break;
                     } else if (word.length() - 1 == j) { // If there's space for the word, place it.
                         for (int k = 0; k < word.length(); k++) {
-                            board[x + (k * dX)][y + (k * dY)][z + (k * dZ)] = word.charAt(k);
+                            board[x + (k * dX)][y + (k * dY)][z + (k * dZ)] = word.charAt(k); // Setting word at new coords to correct char in word
                         }
                         return board;
                     }
@@ -245,8 +244,8 @@ public class WordSearch3D {
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
                 for (int k = 0; k < board[i][j].length; k++) {
-                    if(board[i][j][k] == '\0'){
-                        board[i][j][k] = (char) (new Random().nextInt(26) + 'a');
+                    if(board[i][j][k] == '\0'){ // If the current cell is empty
+                        board[i][j][k] = (char) (new Random().nextInt(26) + 'a'); // Generates random character
                     }
                 }
             }
@@ -254,11 +253,16 @@ public class WordSearch3D {
         return board;
     }
 
+    /**
+     * Checks if board is full
+     * @param board 3D array representing word search
+     * @return false if any spots are empty, true otherwise
+     */
     public boolean checkFullBoard (char[][][] board){
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
-                for (int k = 0; k < board[i][j].length; k++) {
-                    if(board[i][j][k] == '\0'){
+                for (int k = 0; k < board[i][j].length; k++) { // Triple nested loop to check each element
+                    if(board[i][j][k] == '\0'){ // If one cell is empty, return false -> board is not full
                         return false;
                     }
                 }
