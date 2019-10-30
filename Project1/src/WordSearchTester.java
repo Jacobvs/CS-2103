@@ -31,7 +31,7 @@ public class WordSearchTester {
 
 	@Test
 	/**
-	 *  Verifies that search works correctly in a tiny grid that is effectively 2D.
+	 *  Verifies that search works correctly in a 3d array.
 	 */
 	public void testSearch3dWord () {
 		// Note: this grid is 1x2x2 in size
@@ -45,7 +45,7 @@ public class WordSearchTester {
 
 	@Test
 	/**
-	 *  Verifies that search works correctly in a tiny grid that is effectively 2D.
+	 *  Verifies that search finds a word with repeating letters in a 3d array.
 	 */
 	public void testSearch3dWordRepeating () {
 		// Note: this grid is 1x2x2 in size
@@ -59,7 +59,7 @@ public class WordSearchTester {
 
 	@Test
 	/**
-	 *  Verifies that search works correctly in a tiny grid that is effectively 2D.
+	 *  Verifies that search finds a word with all of the same letters in a 3d array.
 	 */
 	public void testSearch3dSameLetters () {
 		// Note: this grid is 1x2x2 in size
@@ -73,7 +73,7 @@ public class WordSearchTester {
 
 	@Test
 	/**
-	 *  Verifies that search works correctly in a tiny grid that is effectively 2D.
+	 *  Verifies that search returns null on a word that's larger than any direction of the 3d array.
 	 */
 	public void testSearch3dLongWord () {
 		// Note: this grid is 1x2x2 in size
@@ -86,7 +86,7 @@ public class WordSearchTester {
 
 	@Test
 	/**
-	 *  Verifies that search works correctly in a tiny grid that is effectively 2D.
+	 *  Verifies that search returns null on an empty word in a 3d array.
 	 */
 	public void testSearch3dEmptyWord () {
 		// Note: this grid is 1x2x2 in size
@@ -99,7 +99,7 @@ public class WordSearchTester {
 
 	@Test
 	/**
-	 *  Verifies that search works correctly in a tiny grid that is effectively 2D.
+	 *  Verifies that search returns the proper coordinates for a one-letter word in a 3d array.
 	 */
 	public void testSearch3dOneLetterWord () {
 		// Note: this grid is 1x2x2 in size
@@ -130,7 +130,9 @@ public class WordSearchTester {
 	 * Verifies that make returns null when it's impossible to construct a puzzle.
 	 */
 	public void testMakeImpossible () {
-		// TODO: implement me
+		final String[] words = new String[] {"aa", "bb", "cc", "dd", "ee"};
+		final char[][][] grid = _wordSearch.make(words, 2, 2, 2);
+		assertNull(grid);
 	}
 
 
@@ -161,7 +163,7 @@ public class WordSearchTester {
 		}
 	}
 
-	/* TODO: write more methods for both make and search. */
+	/* TODO: write more methods for make*/
 
 	@Before
 	public void setUp () {

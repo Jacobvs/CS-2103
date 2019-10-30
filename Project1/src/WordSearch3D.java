@@ -40,7 +40,7 @@ public class WordSearch3D {
             return null;
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
-                for (int k = 0; k < grid[j].length; k++) { // Tri-nested loop to traverse the 3d Array
+                for (int k = 0; k < grid[i][j].length; k++) { // Tri-nested loop to traverse the 3d Array
                     if (grid[i][j][k] == word.charAt(0)) { // If current loc = first letter of word,
                         if(word.length() == 1)
                             return new int[][]{{i,j,k}};
@@ -144,34 +144,42 @@ public class WordSearch3D {
      * no satisfying grid could be found.
      */
     public char[][][] make(String[] words, int sizeX, int sizeY, int sizeZ) {
-        char[][][] blank_board = new char[sizeX][sizeY][sizeZ];
-        char[][][] board = blank_board;
+        char[][][] board = new char[sizeX][sizeY][sizeZ];
         ArrayList<String> wordsToPlace = new ArrayList<>(Arrays.asList(words));
-        for (int i = 0; i < 2000; i++) {
 
-            System.out.println("board tries: " + i);
-            int w = new Random().nextInt(wordsToPlace.size());
-            String word = wordsToPlace.get(w);
+        for (int i = 1; i < 1000; i++) {
+            while(true){
+                int w = new Random().nextInt(wordsToPlace.size());
+                String word = wordsToPlace.get(w);
 
-            char[][][] new_board = placeWord(board, word, sizeX, sizeY, sizeZ);
-            if (new_board == null) {
-                System.out.println("Reset Board");
-                board = blank_board;
-                wordsToPlace = new ArrayList<>(Arrays.asList(words));
-            } else {
-                if(wordsToPlace.size() == 1)
-                    return fillBlankSpace(board);
-                else {
-                    board = new_board;
-                    wordsToPlace.remove(w);
+                board = placeWord(board, word);
+                if(board != null){
+                    if(wordsToPlace.size() == 1) {
+                        System.out.println("Completed board:");
+                        System.out.println(Arrays.deepToString(board));
+                        System.out.println("Filled board:");
+                        board = fillBlankSpace(board);
+                        System.out.println(Arrays.deepToString(board));
+                        return board;
+                    }
+                    else
+                        wordsToPlace.remove(w);
                 }
+                else
+                    break;
             }
+
+            System.out.println("Reset Board");
+            System.out.println("Board attempts: " + i);
+            board = new char[sizeX][sizeY][sizeZ];
+            wordsToPlace = new ArrayList<>(Arrays.asList(words));
+
         }
 
         return null;
     }
 
-    public char[][][] placeWord(char[][][] board, String word, int sizeX, int sizeY, int sizeZ) {
+    public char[][][] placeWord(char[][][] board, String word) {
 
         for (int i = 0; i < 1000; i++) {
             int x = 0, y = 0, z = 0;
@@ -191,8 +199,6 @@ public class WordSearch3D {
                 try {
                     char c = board[x + (j * dX)][y + (j * dY)][z + (j * dZ)];
                     if (c != '\0' && c != word.charAt(j)) {
-                        //System.out.println("broken at c: " + c + " word: " + word.charAt(j));
-                        //System.out.println(Arrays.deepToString(board));
                         break;
                     } else if (word.length() - 1 == j) { // If there's space for the word, place it.
                         for (int k = 0; k < word.length(); k++) {
@@ -201,7 +207,6 @@ public class WordSearch3D {
                         return board;
                     }
                 } catch (ArrayIndexOutOfBoundsException e) {
-                    //System.out.println("Out of bounds j: " + j);
                     break;
                 }
             }
@@ -212,8 +217,8 @@ public class WordSearch3D {
     public char[][][] fillBlankSpace(char[][][] board){
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[i].length; j++) {
-                for (int k = 0; k < board[j].length; k++) {
-                    if(board[i][j][k] == (char) 0){
+                for (int k = 0; k < board[i][j].length; k++) {
+                    if(board[i][j][k] == '\0'){
                         board[i][j][k] = (char) (new Random().nextInt(26) + 'a');
                     }
                 }
