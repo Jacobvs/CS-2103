@@ -5,13 +5,6 @@ import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
-/*
- 1. Provided
- 2. Middle
- 3. Left Edge
- 4. In corner
- 5. No word
- */
 
 /**
  * Code to test <tt>WordSearch3D</tt>.
@@ -135,7 +128,7 @@ public class WordSearchTester {
 
 	@Test
 	/**
-	 * Verifies that make returns null when it's impossible to construct a puzzle.
+	 * Verifies that make returns null when it's impossible to construct a puzzle (too many words & not enough space to fit them all).
 	 */
 	public void testMakeImpossible () {
 		final String[] words = new String[] {"aa", "bb", "cc", "dd", "ee"};
@@ -171,7 +164,48 @@ public class WordSearchTester {
 		}
 	}
 
-	/* TODO: write more methods for make*/
+	@Test
+	/**
+	 * Verifies that make returns null when an input word is too long.
+	 */
+	public void testMakeWordTooLong () {
+		final String[] words = new String[] {"aa", "bb", "cc", "ddd"};
+		final char[][][] grid = _wordSearch.make(words, 2, 2, 2);
+		assertNull(grid);
+	}
+
+	@Test
+	/**
+	 * Verifies that make returns an empty grid when passed in no parameters.
+	 */
+	public void testMakeNoInputs () {
+		final String[] words = new String[] {};
+		final char[][][] grid = _wordSearch.make(words, 0, 0, 0);
+		assertArrayEquals(grid, new char[0][0][0]);
+	}
+
+	@Test
+	/**
+	 * Verifies that make returns a random grid when passed in no words.
+	 * May fail on the *very rare* occasion that the arrays are randomly the same
+	 */
+	public void testMakeNoWords () {
+		final String[] words = new String[] {};
+		final char[][][] grid = _wordSearch.make(words, 20, 20, 20);
+		assertNotSame(grid, _wordSearch.make(words, 20, 20, 20));
+	}
+
+	@Test
+	/**
+	 * Verifies that make returns a random grid when passed in no words.
+	 * May fail on the *very rare* occasion that the arrays are randomly the same
+	 */
+	public void testMakeMissingAxis () {
+		final String[] words = new String[] {"cat", "mat", "hat"};
+		final char[][][] grid = _wordSearch.make(words, 3, 3, 0);
+		assertNull(grid);
+	}
+
 
 	@Before
 	public void setUp () {

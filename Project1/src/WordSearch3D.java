@@ -156,13 +156,17 @@ public class WordSearch3D {
         char[][][] board = new char[sizeX][sizeY][sizeZ]; //make new board
         ArrayList<String> wordsToPlace = new ArrayList<>(Arrays.asList(words));
 
+        if(words.length == 0)
+            return fillBlankSpace(board);
+        if(sizeX == 0 || sizeY == 0 || sizeZ == 0)
+            return null;
+
         for (int i = 1; i < 1000; i++) { // 1000 tries to make a completed board
             while(true){
                 int w = new Random().nextInt(wordsToPlace.size()); // Random index of the words list
                 String word = wordsToPlace.get(w);     // This will insert a random word in list, not just the first one
 
                 board = placeWord(board, word); // Sets board to a new board that has the word placed
-                System.out.println(Arrays.deepToString(board));
                 if(board != null){
                     if(wordsToPlace.size() == 1) { // If there is one more word in list
                         System.out.println("Completed board:");
@@ -230,7 +234,6 @@ public class WordSearch3D {
                 }
             }
         }
-        System.out.println("word is null");
         return null;
     }
 
