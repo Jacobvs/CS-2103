@@ -10,5 +10,7 @@ public class CacheTest {
 		Cache<Integer,String> cache = new LRUCache<Integer,String>(provider, 5);
 	}
 
+	//TODO: implement additional tests
+
 
 }

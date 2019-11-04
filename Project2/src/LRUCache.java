@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * An implementation of <tt>Cache</tt> that uses a least-recently-used (LRU)
@@ -8,7 +9,7 @@ public class LRUCache<T, U> implements Cache<T, U> {
 
 	private int capacity, misses;
 	private DataProvider<T, U> dataProvider;
-	private HashMap<T, Node<T, U>> map;
+	private Map<T, Node<T, U>> map;
 	private Node<T, U> first;
 	private Node<T, U> last;
 
@@ -55,6 +56,7 @@ public class LRUCache<T, U> implements Cache<T, U> {
 		updating indices
 
 
+		O(1) Operation:
 		Consider a doubly linked list A <--> B <--> C <--> D <--> E. Suppose I have a pointer/reference to D. To remove it, I do:
 			Find the predecessor (C) - O(1)
 			Find the successor (D) - O(1)
@@ -81,11 +83,19 @@ public class LRUCache<T, U> implements Cache<T, U> {
 		}
 	}
 
+	/**
+	 * Moves a node from it's current position to the front of the list
+	 * @param n Node to be moved to the front of the list
+	 */
 	private void moveNodeToFront(Node<T, U> n){
 		removeNode(n, false);
 		push(n);
 	}
 
+	/**
+	 * Adds a node to the front of the list
+	 * @param n Node to be added
+	 */
 	private void push(Node<T, U> n){
 		this.last.setNext(n);
 		this.first.setPrevious(n);
@@ -94,6 +104,11 @@ public class LRUCache<T, U> implements Cache<T, U> {
 		this.first = n;
 	}
 
+	/**
+	 * Removes a node from the list & optionally from the map
+	 * @param n Node to be removed
+	 * @param removeFromMap Boolean argument to also remove the node from the map
+	 */
 	private void removeNode(Node<T, U> n, boolean removeFromMap){
 		n.getPrevious().setNext(n.getNext());
 		if(removeFromMap) map.remove(n.getKey());

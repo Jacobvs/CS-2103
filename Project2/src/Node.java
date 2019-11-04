@@ -1,6 +1,4 @@
-import java.util.LinkedList;
-
-class Node<T, U> extends LinkedList {
+class Node<T, U> {
     private T key;
     private U value;
     private Node<T, U> previous = this;
