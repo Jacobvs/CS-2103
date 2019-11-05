@@ -10,8 +10,8 @@ public class LRUCache<T, U> implements Cache<T, U> {
 	private int capacity, misses;
 	private DataProvider<T, U> dataProvider;
 	private Map<T, Node<T, U>> map;
-	private Node<T, U> first;
-	private Node<T, U> last;
+	private Node<T, U> first = null;
+	private Node<T, U> last = null;
 
 	/**
 	 * @param provider the data provider to consult for a cache miss
@@ -22,7 +22,6 @@ public class LRUCache<T, U> implements Cache<T, U> {
 		this.capacity = capacity;
 		this.dataProvider = provider;
 		map = new HashMap<>();
-
 	}
 
 	/**
@@ -63,7 +62,6 @@ public class LRUCache<T, U> implements Cache<T, U> {
 			Change the predecessor's "next" to the successor (E) - O(1)
 			Change the successor "previous" to the predecessor's (C) - O(1)
 		 */
-
 		Node<T, U> request = map.get(key);
 
 		if(request != null){ // Cache hit
@@ -73,12 +71,17 @@ public class LRUCache<T, U> implements Cache<T, U> {
 		else{ // Cache miss
 			misses++;
 			U data = dataProvider.get(key);
+			Node<T, U> n = new Node<>(key, data, last, first);
+			if(first == null){
+				first = n;
+				last = n;
+			}
 			if(map.size() >= capacity){ // queue is full, evict least recently used data
 				removeNode(last, true);
 				last = last.getPrevious();
 			}
-			map.put(key, new Node<>(key, data));
-			push(new Node<>(key, data));
+			map.put(key, n);
+			push(n);
 			return data;
 		}
 	}
@@ -99,8 +102,6 @@ public class LRUCache<T, U> implements Cache<T, U> {
 	private void push(Node<T, U> n){
 		this.last.setNext(n);
 		this.first.setPrevious(n);
-		n.setPrevious(last);
-		n.setNext(first);
 		this.first = n;
 	}
 

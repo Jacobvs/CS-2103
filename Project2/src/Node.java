@@ -1,12 +1,14 @@
 class Node<T, U> {
     private T key;
     private U value;
-    private Node<T, U> previous = this;
-    private Node<T, U> next = this;
+    private Node<T, U> previous;
+    private Node<T, U> next;
 
-    Node(T key, U value){
+    Node(T key, U value, Node prev, Node next){
         this.key = key;
         this.value = value;
+        this.previous = prev;
+        this.next = next;
     }
 
     void setPrevious(Node<T, U> n){
