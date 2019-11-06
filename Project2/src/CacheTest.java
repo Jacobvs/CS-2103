@@ -12,7 +12,7 @@ public class CacheTest {
 	DataProvider<Integer,String> provider = new DataProvider<Integer, String>() {
 		@Override
 		public String get(Integer key) {
-			return (0 <= key && key <= dataArr.length-1) ? dataArr[key] : null; //
+			return (0 <= key && key <= dataArr.length-1) ? dataArr[key] : null; // return an element from the dataArr or null if the index (key) provided is too large
 		}
 	}; // Need to instantiate an actual DataProvider
 
