@@ -7,124 +7,107 @@ import java.util.Map;
  */
 public class LRUCache<T, U> implements Cache<T, U> {
 
-	private int capacity, misses;
-	private DataProvider<T, U> dataProvider;
-	private Map<T, Node<T, U>> map;
-	private Node<T, U> first = null;
-	private Node<T, U> last = null;
+    private int capacity, misses;
+    private DataProvider<T, U> dataProvider;
+    private Map<T, Node<T, U>> map;
+    private Node<T, U> first = null;
+    private Node<T, U> last = null;
 
-	/**
-	 * @param provider the data provider to consult for a cache miss
-	 * @param capacity the exact number of (key,value) pairs to store in the cache
-	 */
-	public LRUCache (DataProvider<T, U> provider, int capacity) {
-		this.misses = 0;
-		this.capacity = capacity;
-		this.dataProvider = provider;
-		map = new HashMap<>();
-	}
+    /**
+     * @param provider the data provider to consult for a cache miss
+     * @param capacity the exact number of (key,value) pairs to store in the cache
+     */
+    public LRUCache(DataProvider<T, U> provider, int capacity) {
+        this.misses = 0;
+        this.capacity = capacity;
+        this.dataProvider = provider;
+        map = new HashMap<>();
+    }
 
-	/* NOTES/Thinking :
-	1. check map for contains --> returns null or linkedlist object/ reference?
-	2. if map contains, keep map same, push element of ll to front of ll (ru = front)
-	3. if map == null & cache not full, add to map & front of ll && update missed num
-	4. if map == null & cache full:
-	-  0. increment misses
-	-  1. retrieve new data
-	-  2. remove last element from ll and map
-	-  3. add new data to map and front of ll
-	-  4. return new data??
+    /**
+     * Returns the value associated with the specified key.
+     *
+     * @param key the key
+     * @return the value associated with the key
+     */
+    public U get(T key) {
+        Node<T, U> request = map.get(key); // Request data from hashmap
 
+        if (request != null) { // Cache hit
+            moveNodeToFront(request); // Move requested node to front of nodes
+            return request.getValue();
+        }
+        else { // Cache miss
+            misses++;
+            U data = dataProvider.get(key); // Grab requested data from dataprovider
+            Node<T, U> n = new Node<>(key, data, last, first); // create new node with data
 
-	O(1) operations:
-	adding to ll
-	accessing first/last element in ll
-	removing from ll with index
-	accessing hashmap with key
+            if (first == null) { // if this is the first piece of data, initialize tail and head of list
+                first = n;
+                last = n;
+            }
+            if (capacity <= 0) // if capacity of the queue is 0 don't attempt to move anything around
+                return data;
+            else if (map.size() >= capacity) { // queue is full, evict least recently used data
+                removeNode(last, true); // remove node from list and map
+            }
 
-	O(n) operations:
-	finding element in ll without index
-	finding element in hm without key/hash
-	removing from ll without index
-	updating indices
+            map.put(key, n); // add new data to map
+            push(n); // add node to front of list
+            return data;
+        }
+    }
 
+    /**
+     * Moves a node from it's current position to the front of the list
+     *
+     * @param n Node to be moved to the front of the list
+     */
+    private void moveNodeToFront(Node<T, U> n) {
+        removeNode(n, false);
+        push(n);
+    }
 
+    /**
+     * Adds a node to the front of the list
+     *
+     * @param n Node to be added
+     */
+    private void push(Node<T, U> n) {
+        this.last.setNext(n);
+        this.first.setPrevious(n);
+        this.first = n;
+    }
+
+	/*
 	O(1) Operation:
-	Consider a doubly linked list A <--> B <--> C <--> D <--> E. Suppose I have a pointer/reference to D. To remove it, I do:
-		Find the predecessor (C) - O(1)
-		Find the successor (D) - O(1)
-		Change the predecessor's "next" to the successor (E) - O(1)
-		Change the successor "previous" to the predecessor's (C) - O(1)
+	Doubly linked list A <--> B <--> C <--> D <--> E. To remove D:
+		Find the previous (C) - O(1)
+		Find the next (E) - O(1)
+		Change the previous's "next" to D's next (E) - O(1)
+		Change the next's "previous" to D's previous (C) - O(1)
 	 */
 
-	/**
-	 * Returns the value associated with the specified key.
-	 * @param key the key
-	 * @return the value associated with the key
-	 */
-	public U get (T key) {
-		Node<T, U> request = map.get(key);
-
-		if(request != null){ // Cache hit
-			moveNodeToFront(request);
-			return request.getValue();
-		}
-		else{ // Cache miss
-			misses++;
-			U data = dataProvider.get(key);
-			Node<T, U> n = new Node<>(key, data, last, first);
-			if(first == null){
-				first = n;
-				last = n;
-			}
-			if(capacity <= 0)
-				return data;
-			else if(map.size() >= capacity){ // queue is full, evict least recently used data
-				removeNode(last, true);
-			}
-			map.put(key, n);
-			push(n);
-			return data;
-		}
-	}
-
-	/**
-	 * Moves a node from it's current position to the front of the list
-	 * @param n Node to be moved to the front of the list
-	 */
-	private void moveNodeToFront(Node<T, U> n){
-		removeNode(n, false);
-		push(n);
-	}
-
-	/**
-	 * Adds a node to the front of the list
-	 * @param n Node to be added
-	 */
-	private void push(Node<T, U> n){
-		this.last.setNext(n);
-		this.first.setPrevious(n);
-		this.first = n;
-	}
-
-	/**
-	 * Removes a node from the list & optionally from the map
-	 * @param n Node to be removed
-	 * @param removeFromMap Boolean argument to also remove the node from the map
-	 */
-	private void removeNode(Node<T, U> n, boolean removeFromMap){
-		n.getPrevious().setNext(n.getNext());
-		n.getNext().setPrevious(n.getPrevious());
-		if(n == last) last = last.getPrevious();
-		if(removeFromMap) map.remove(n.getKey());
-	}
+    /**
+     * Removes a node from the list & optionally from the map
+     *
+     * @param n             Node to be removed
+     * @param removeFromMap Boolean argument to also remove the node from the map
+     */
+    private void removeNode(Node<T, U> n, boolean removeFromMap) {
+        n.getPrevious().setNext(n.getNext()); // See note above for O(1) explanation
+        n.getNext().setPrevious(n.getPrevious());
+        if (n == last) last = last.getPrevious(); // ensure last gets reset properly
+        if (removeFromMap) map.remove(n.getKey()); // if evicting, remove data from map
+    }
 
 
-	/**
-	 * Returns the number of cache misses since the object's instantiation.
-	 * @return the number of cache misses since the object's instantiation.
-	 */
-	public int getNumMisses () {
-		return misses;
-	}
+    /**
+     * Returns the number of cache misses since the object's instantiation.
+     *
+     * @return the number of cache misses since the object's instantiation.
+     */
+    public int getNumMisses() {
+        return misses;
+    }
 }

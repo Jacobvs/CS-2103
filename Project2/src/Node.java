@@ -1,4 +1,4 @@
-class Node<T, U> {
+public class Node<T, U> {
     private T key;
     private U value;
     private Node<T, U> previous;
@@ -11,7 +11,7 @@ class Node<T, U> {
      * @param prev previous node in list
      * @param next next node in list
      */
-    Node(T key, U value, Node prev, Node next){
+    Node(T key, U value, Node<T, U> prev, Node<T, U> next){
         this.key = key;
         this.value = value;
         this.previous = prev;
