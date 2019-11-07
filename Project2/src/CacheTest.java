@@ -25,6 +25,9 @@ public class CacheTest {
 		assertEquals(cache.get(0), "a");
 	}
 
+	/**
+	 * Tests if get can handle null as an input, and if misses are counted properly
+	 */
 	@Test
 	public void testRetrieveNull(){
 		Cache<Integer,String> cache = new LRUCache<>(provider, 5);
@@ -37,6 +40,10 @@ public class CacheTest {
 		assertEquals(10, cache.getNumMisses());
 	}
 
+	/**
+	 * Ensures that cache pulls from data provider properly, and that get method pulls from cache properly
+	 * Testing against a normal sized set of data, in this case capacity 5
+	 */
 	@Test
 	public void testCaching() {
 		Cache<Integer,String> cache = new LRUCache<>(provider, 5);
@@ -49,6 +56,12 @@ public class CacheTest {
 		assertEquals(7, cache.getNumMisses());
 	}
 
+	/**
+	 * Ensures that nodes are being moved and evicted properly
+	 * - Ensures that a previously not most recent node is being marked as most recent if it is called and hit
+	 * - Ensures that a node is evicted if it is least recently used and an extra node is added to full list
+	 * - Testing against a somewhat specialized set of data, as there is only one node that is not head or tail
+	 */
 	@Test
 	public void testLRUEviction(){
 		Cache<Integer,String> cache = new LRUCache<>(provider, 3);
@@ -69,6 +82,11 @@ public class CacheTest {
 		assertArrayEquals(new int[]{3,3,4,5,5}, misses);
 	}
 
+	/**
+	 * Ensure that the LRUCache works properly with a maximum capacity of 2.
+	 * - Ensures that the LRUCache is able to properly set head and tail when there are only 2 elements
+	 * - Testing against special case, as there is no node between head and tail
+	 */
 	@Test
 	public void testCapacity2(){
 		Cache<Integer,String> cache = new LRUCache<>(provider, 2);
@@ -89,6 +107,10 @@ public class CacheTest {
 		assertArrayEquals(new int[]{1,2,2,3,4,4}, misses);
 	}
 
+	/**
+	 * Tests that LRUCache works with a maximum capacity of 1
+	 * - This tests a special case, as the head and tail will be the same.
+	 */
 	@Test
 	public void testCapacity1(){
 		Cache<Integer,String> cache = new LRUCache<>(provider, 1);
@@ -109,6 +131,10 @@ public class CacheTest {
 		assertArrayEquals(new int[]{1,2,2,3,4,4}, misses);
 	}
 
+	/**
+	 * Tests that LRUCache does not break when assigned a capacity of zero
+	 * - All elements will be misses
+	 */
 	@Test
 	public void testCapacity0(){
 		Cache<Integer,String> cache = new LRUCache<>(provider, 0);
@@ -120,7 +146,10 @@ public class CacheTest {
 		assertEquals(5, cache.getNumMisses());
 	}
 
-
+	/**
+	 * Tests LRUCache with a relatively large set of data
+	 * - Should work the same as any general case (cache maximum capacity > 3)
+	 */
 	@Test
 	public void testLargeCapacity(){
 		DataProvider<Integer, Integer> largeDP = key -> key;
