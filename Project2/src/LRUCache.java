@@ -34,7 +34,7 @@ public class LRUCache<T, U> implements Cache<T, U> {
         Node<T, U> request = map.get(key); // Request data from hashmap
 
         if (request != null) { // Cache hit
-            moveNodeToFront(request); // Move requested node to front of nodes
+            moveNodeToFront(request); // Move requested node to front of nodes in O(1) time by removing specified node, then pushing to front
             return request.getValue();
         }
         else { // Cache miss
@@ -59,7 +59,7 @@ public class LRUCache<T, U> implements Cache<T, U> {
     }
 
     /**
-     * Moves a node from it's current position to the front of the list
+     * Moves a node from it's current position to the front of the list in O(1) time
      *
      * @param n Node to be moved to the front of the list
      */

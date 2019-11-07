@@ -1,5 +1,7 @@
 import org.junit.Test;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
@@ -9,16 +11,22 @@ import static org.junit.Assert.assertEquals;
 public class CacheTest {
 
 	private String[] dataArr = new String[]{"a", "b", "c", "d", "e", "f", "g"}; // capacity 7 (0-6)
+
 	private DataProvider<Integer,String> provider = key -> { // Initialize dataprovider for testing
 		return (0 <= key && key <= dataArr.length-1) ? dataArr[key] : null; // return an element from the dataArr or null if the index (key) provided is too large
 	};
 
-
+	/**
+	 * Test that LRU Cache initializes correctly
+	 */
 	@Test
 	public void leastRecentlyUsedIsCorrect () {
 		Cache<Integer,String> cache = new LRUCache<Integer,String>(provider, 5);
 	}
 
+	/**
+	 * Test that the Cache retrieves data properly
+	 */
 	@Test
 	public void retrieveData() {
 		Cache<Integer,String> cache = new LRUCache<>(provider, 5);
@@ -163,9 +171,24 @@ public class CacheTest {
 		assertEquals(10000, cache.getNumMisses());
 	}
 
+	/**
+	 * Tests that the getNumMisses from cache is the same as the get calls from the DataProvider
+	 */
+	@Test
+	public void testNumMisses(){
+        final AtomicInteger requests = new AtomicInteger(); // Use Atomic Integer to log get requests from inner class
+		DataProvider<Integer,String> loggingProvider = key -> { // Initialize dataprovider for testing
+			requests.set(requests.get()+1); // Increment requests
+			return (0 <= key && key <= dataArr.length-1) ? dataArr[key] : null; // return an element from the dataArr or null if the index (key) provided is too large
+		};
+		Cache<Integer, String> cache = new LRUCache<>(loggingProvider, 5);
 
-
-
-
-
+        for (int i = 0; i < 7 ; i++) {
+            cache.get(i);
+        }
+        for (int i = 2; i < 7; i++) {
+            cache.get(i);
+        }
+        assertEquals(new AtomicInteger(7).get(), requests.get());
+	}
 }
