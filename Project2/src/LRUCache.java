@@ -24,44 +24,45 @@ public class LRUCache<T, U> implements Cache<T, U> {
 		map = new HashMap<>();
 	}
 
+	/* NOTES/Thinking :
+	1. check map for contains --> returns null or linkedlist object/ reference?
+	2. if map contains, keep map same, push element of ll to front of ll (ru = front)
+	3. if map == null & cache not full, add to map & front of ll && update missed num
+	4. if map == null & cache full:
+	-  0. increment misses
+	-  1. retrieve new data
+	-  2. remove last element from ll and map
+	-  3. add new data to map and front of ll
+	-  4. return new data??
+
+
+	O(1) operations:
+	adding to ll
+	accessing first/last element in ll
+	removing from ll with index
+	accessing hashmap with key
+
+	O(n) operations:
+	finding element in ll without index
+	finding element in hm without key/hash
+	removing from ll without index
+	updating indices
+
+
+	O(1) Operation:
+	Consider a doubly linked list A <--> B <--> C <--> D <--> E. Suppose I have a pointer/reference to D. To remove it, I do:
+		Find the predecessor (C) - O(1)
+		Find the successor (D) - O(1)
+		Change the predecessor's "next" to the successor (E) - O(1)
+		Change the successor "previous" to the predecessor's (C) - O(1)
+	 */
+
 	/**
 	 * Returns the value associated with the specified key.
 	 * @param key the key
 	 * @return the value associated with the key
 	 */
 	public U get (T key) {
-		/* NOTES/Thinking :
-		1. check map for contains --> returns null or linkedlist object/ reference?
-		2. if map contains, keep map same, push element of ll to front of ll (ru = front)
-		3. if map == null & cache not full, add to map & front of ll && update missed num
-		4. if map == null & cache full:
-		-  0. increment misses
-		-  1. retrieve new data
-		-  2. remove last element from ll and map
-		-  3. add new data to map and front of ll
-		-  4. return new data??
-
-
-		O(1) operations:
-		adding to ll
-		accessing first/last element in ll
-		removing from ll with index
-		accessing hashmap with key
-
-		O(n) operations:
-		finding element in ll without index
-		finding element in hm without key/hash
-		removing from ll without index
-		updating indices
-
-
-		O(1) Operation:
-		Consider a doubly linked list A <--> B <--> C <--> D <--> E. Suppose I have a pointer/reference to D. To remove it, I do:
-			Find the predecessor (C) - O(1)
-			Find the successor (D) - O(1)
-			Change the predecessor's "next" to the successor (E) - O(1)
-			Change the successor "previous" to the predecessor's (C) - O(1)
-		 */
 		Node<T, U> request = map.get(key);
 
 		if(request != null){ // Cache hit
@@ -76,9 +77,10 @@ public class LRUCache<T, U> implements Cache<T, U> {
 				first = n;
 				last = n;
 			}
-			if(map.size() >= capacity){ // queue is full, evict least recently used data
+			if(capacity <= 0)
+				return data;
+			else if(map.size() >= capacity){ // queue is full, evict least recently used data
 				removeNode(last, true);
-				last = last.getPrevious();
 			}
 			map.put(key, n);
 			push(n);
@@ -112,6 +114,8 @@ public class LRUCache<T, U> implements Cache<T, U> {
 	 */
 	private void removeNode(Node<T, U> n, boolean removeFromMap){
 		n.getPrevious().setNext(n.getNext());
+		n.getNext().setPrevious(n.getPrevious());
+		if(n == last) last = last.getPrevious();
 		if(removeFromMap) map.remove(n.getKey());
 	}
 
