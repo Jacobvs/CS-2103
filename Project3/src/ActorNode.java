@@ -11,6 +11,10 @@ public class ActorNode implements Node {
         this._neighbors = neighbors;
     }
 
+    public void addNeighbor(MovieNode n){
+        this._neighbors.add(n);
+    }
+
     @Override
     public String getName() {
         return _name;

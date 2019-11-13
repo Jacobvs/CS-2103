@@ -11,14 +11,18 @@ public class MovieNode implements Node {
         this._neighbors = neighbors;
     }
 
+    public void addNeighbor(ActorNode n){
+        this._neighbors.add(n);
+    }
+
     @Override
     public String getName() {
-        return _name;
+        return this._name;
     }
 
     @Override
     public Collection<? extends Node> getNeighbors() {
-        return _neighbors;
+        return this._neighbors;
     }
 
 }
