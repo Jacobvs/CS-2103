@@ -94,7 +94,8 @@ public class GraphSearchGUI extends Application {
 		// Load graph data and initialize the ListViews
 		final IMDBGraph graph;
 		try {
-			graph = new IMDBGraphImpl("/Users/jake/Courses/CS210X/Graph/IMDB/actors.list", "/Users/jake/Courses/CS210X/Graph/IMDB/actresses.list");
+			//graph = new IMDBGraphImpl("/Users/jake/Courses/CS210X/Graph/IMDB/actors.list", "/Users/jake/Courses/CS210X/Graph/IMDB/actresses.list");
+			graph = new IMDBGraphImpl("/Users/kids/git/CS-2103/Project3/actors.list", "/Users/kids/git/CS-2103/Project3/actresses.list");
 		} catch (IOException ioe) {
 			System.out.println("Couldn't load data");
 			return;
