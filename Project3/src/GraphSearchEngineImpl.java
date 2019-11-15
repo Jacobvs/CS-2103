@@ -8,6 +8,9 @@ public class GraphSearchEngineImpl implements GraphSearchEngine {
      */
     @SuppressWarnings("unchecked")
     public List<Node> findShortestPath(Node s, Node t) {
+        if(s == null || t == null)
+            return null;
+
         Queue<LinkedList<Node>> _pathsToVisit = new ArrayDeque<>(); // Stores paths that need to be searched (need to use add to maintain FIFO order)
         HashSet<Node> _visitedNodes = new HashSet<>(); // Stores list of visited nodes
 
