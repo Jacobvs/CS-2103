@@ -1,13 +1,13 @@
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.*;
 
 public class IMDBGraphImpl implements IMDBGraph {
 
-    private HashMap<String, ActorNode> actorMap = new HashMap<>();
-    private HashMap<String, MovieNode> movieMap = new HashMap<>();
+    private final HashMap<String, ActorNode> actorMap = new HashMap<>();
+    private final HashMap<String, MovieNode> movieMap = new HashMap<>();
 
-    public IMDBGraphImpl(String actorsFilename, String actressesFilename) throws FileNotFoundException {
+    public IMDBGraphImpl(String actorsFilename, String actressesFilename) throws IOException {
         final Scanner actorScanner = new Scanner(new File(actorsFilename), "ISO-8859-1");
         final Scanner actressScanner = new Scanner(new File(actressesFilename), "ISO-8859-1");
 
@@ -22,7 +22,7 @@ public class IMDBGraphImpl implements IMDBGraph {
     private void parseData(Scanner scanner) {
         boolean reachedStart = false, onlyTV = true; // Define variables
         Queue<MovieNode> moviesToUpdate = new ArrayDeque<>();
-        ArrayList<MovieNode> movies = new ArrayList<>();
+        List<MovieNode> movies = new ArrayList<>();
         String actorName = "", movieName;
         MovieNode mn;
 

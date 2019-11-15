@@ -1,12 +1,12 @@
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 public class MovieNode implements Node {
 
     private String _name;
-    private ArrayList<ActorNode> _neighbors;
+    private List<ActorNode> _neighbors;
 
-    public MovieNode(String name, ArrayList<ActorNode> neighbors) {
+    public MovieNode(String name, List<ActorNode> neighbors) {
         this._name = name;
         this._neighbors = neighbors;
     }

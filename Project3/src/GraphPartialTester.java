@@ -3,6 +3,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -14,24 +15,15 @@ public class GraphPartialTester {
 	IMDBGraph imdbGraph, imdbGraph10k;
 	GraphSearchEngine searchEngine;
 
-	/**
-	 * Verifies that there is no shortest path between a specific and actor and actress.
-	 */
-	@Test(timeout=5000)
-	public void findShortestPath () throws IOException {
-		imdbGraph = new IMDBGraphImpl("/Users/Jacob/OneDrive - Worcester Polytechnic Institute (wpi.edu)/CS 2103/Project3/actors_test.list", "/Users/Jacob/OneDrive - Worcester Polytechnic Institute (wpi.edu)/CS 2103/Project3/actresses_test.list");
-		final Node actor1 = imdbGraph.getActor("Actor1");
-		final Node actress2 = imdbGraph.getActor("Actress2");
-		final List<Node> shortestPath = searchEngine.findShortestPath(actor1, actress2);
-		assertNull(shortestPath);  // there is no path between these people
-	}
-
 	@Before
 	/**
 	 * Instantiates the graph
 	 */
 	public void setUp () throws IOException {
-		imdbGraph = new IMDBGraphImpl("/Users/Jacob/OneDrive - Worcester Polytechnic Institute (wpi.edu)/CS 2103/Project3/actors_test.list", "/Users/Jacob/OneDrive - Worcester Polytechnic Institute (wpi.edu)/CS 2103/Project3/actresses_test.list");
+		long start = System.nanoTime();
+		imdbGraph = new IMDBGraphImpl("/Users/kids/git/CS-2103/Project3/actors.list", "/Users/kids/git/CS-2103/Project3/actresses.list");
+		long end = System.nanoTime();
+		System.out.println(TimeUnit.NANOSECONDS.toSeconds(end-start));
 		searchEngine = new GraphSearchEngineImpl();
 	}
 
@@ -44,12 +36,24 @@ public class GraphPartialTester {
 		// Yay! We didn't crash
 	}
 
+	/**
+	 * Verifies that there is no shortest path between a specific and actor and actress.
+	 */
+	@Test(timeout=5000)
+	public void findShortestPath () throws IOException {
+		imdbGraph = new IMDBGraphImpl("/Users/kids/git/CS-2103/Project3/actors_test.list", "/Users/kids/git/CS-2103/Project3/actresses_test.list");
+		final Node actor1 = imdbGraph.getActor("Actor1");
+		final Node actress2 = imdbGraph.getActor("Actress2");
+		final List<Node> shortestPath = searchEngine.findShortestPath(actor1, actress2);
+		assertNull(shortestPath);  // there is no path between these people
+	}
+
 	@Test
 	/**
 	 * Verifies that a specific movie has been parsed.
 	 */
 	public void testSpecificMovie () {
-		testFindNode(imdbGraph.getMovies(), "Movie1 (2001)");
+		testFindNode(imdbGraph.getMovies(), "Welcome to Slab City (2012)");
 	}
 
 	@Test
@@ -57,33 +61,17 @@ public class GraphPartialTester {
 	 * Verifies that a specific actress has been parsed.
 	 */
 	public void testSpecificActress () {
-		testFindNode(imdbGraph.getActors(), "Actress2");
+		testFindNode(imdbGraph.getActors(), "Abbot, Pamela");
 	}
 
 	@Test(timeout=5000)
 	public void testRightNum() throws IOException{
-		imdbGraph10k = new IMDBGraphImpl("/Users/Jacob/OneDrive - Worcester Polytechnic Institute (wpi.edu)/CS 2103/Project3/actors10k.list", "/Users/Jacob/OneDrive - Worcester Polytechnic Institute (wpi.edu)/CS 2103/Project3/actresses10k.list");
+		imdbGraph10k = new IMDBGraphImpl("/Users/kids/git/CS-2103/Project3/actors10k.list", "/Users/kids/git/CS-2103/Project3/actresses10k.list");
 		int numActors = imdbGraph10k.getActors().size();
 		System.out.println(numActors);
 		assertTrue(2100 < numActors && numActors < 2300);
 	}
 
-	@Test
-	public void testNestedLLMutation(){
-		Queue<LinkedList<String>> test = new ArrayDeque<>();
-		LinkedList<String> startList = new LinkedList<String>(); // Starting with Queue containing list containing first node
-		startList.add("a");
-		startList.add("b");
-		test.add((LinkedList) startList.clone());
-		test.add(startList);
-		System.out.println("test");
-		System.out.println("Original List: " + ((ArrayDeque<LinkedList<String>>) test).peekFirst().toString());
-        System.out.println("Removing element");
-		startList.remove();
-		System.out.println("Cloned List: " + test.remove().toString());
-        System.out.println("OG List: " + test.remove().toString());
-
-	}
 
 	/**
 	 * Verifies that the specific graph contains a node with the specified name
@@ -93,7 +81,7 @@ public class GraphPartialTester {
 	private static void testFindNode (Collection<? extends Node> nodes, String name) {
 		boolean found = false;
 		for (Node node : nodes) {
-			System.out.println(node.getName());
+			//System.out.println(node.getName());
 			if (node.getName().trim().equals(name)) {
 				found = true;
 			}
