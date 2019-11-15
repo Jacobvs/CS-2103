@@ -19,7 +19,7 @@ public class GraphPartialTester {
 	 */
 	@Test(timeout=5000)
 	public void findShortestPath () throws IOException {
-		imdbGraph = new IMDBGraphImpl("actors_test.list", "actresses_test.list");
+		imdbGraph = new IMDBGraphImpl("/Users/Jacob/OneDrive - Worcester Polytechnic Institute (wpi.edu)/CS 2103/Project3/actors_test.list", "/Users/Jacob/OneDrive - Worcester Polytechnic Institute (wpi.edu)/CS 2103/Project3/actresses_test.list");
 		final Node actor1 = imdbGraph.getActor("Actor1");
 		final Node actress2 = imdbGraph.getActor("Actress2");
 		final List<Node> shortestPath = searchEngine.findShortestPath(actor1, actress2);
@@ -31,7 +31,7 @@ public class GraphPartialTester {
 	 * Instantiates the graph
 	 */
 	public void setUp () throws IOException {
-		imdbGraph = new IMDBGraphImpl("/Users/kids/git/CS-2103/Project3/actors_test.list", "/Users/kids/git/CS-2103/Project3/actresses_test.list");
+		imdbGraph = new IMDBGraphImpl("/Users/Jacob/OneDrive - Worcester Polytechnic Institute (wpi.edu)/CS 2103/Project3/actors_test.list", "/Users/Jacob/OneDrive - Worcester Polytechnic Institute (wpi.edu)/CS 2103/Project3/actresses_test.list");
 		searchEngine = new GraphSearchEngineImpl();
 	}
 
@@ -62,23 +62,26 @@ public class GraphPartialTester {
 
 	@Test(timeout=5000)
 	public void testRightNum() throws IOException{
-		imdbGraph10k = new IMDBGraphImpl("actors10k.list", "actresses10k.list");
+		imdbGraph10k = new IMDBGraphImpl("/Users/Jacob/OneDrive - Worcester Polytechnic Institute (wpi.edu)/CS 2103/Project3/actors10k.list", "/Users/Jacob/OneDrive - Worcester Polytechnic Institute (wpi.edu)/CS 2103/Project3/actresses10k.list");
 		int numActors = imdbGraph10k.getActors().size();
 		System.out.println(numActors);
 		assertTrue(2100 < numActors && numActors < 2300);
 	}
 
 	@Test
-	public void testTest(){
+	public void testNestedLLMutation(){
 		Queue<LinkedList<String>> test = new ArrayDeque<>();
 		LinkedList<String> startList = new LinkedList<String>(); // Starting with Queue containing list containing first node
 		startList.add("a");
 		startList.add("b");
 		test.add((LinkedList) startList.clone());
+		test.add(startList);
 		System.out.println("test");
-		System.out.println(test.peek().toString());
+		System.out.println("Original List: " + ((ArrayDeque<LinkedList<String>>) test).peekFirst().toString());
+        System.out.println("Removing element");
 		startList.remove();
-		System.out.println(test.peek().toString());
+		System.out.println("Cloned List: " + test.remove().toString());
+        System.out.println("OG List: " + test.remove().toString());
 
 	}
 

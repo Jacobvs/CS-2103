@@ -13,9 +13,8 @@ public class GraphSearchEngineImpl implements GraphSearchEngine {
 
         LinkedList<Node> startList = new LinkedList<>(); // Starting with Queue containing list containing first node
         startList.add(s);
-
-
         _pathsToVisit.add(startList); // Adds list containing first node to nodesToVisit queue
+
 
         while(_pathsToVisit.size() > 0){ // While the queue is not empty, loop
             LinkedList<Node> path = _pathsToVisit.remove(); // sets path LinkedList to first LinkedList in queue and removes it
