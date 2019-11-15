@@ -1,5 +1,5 @@
 import java.io.File;
-import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.util.*;
 
 public class IMDBGraphImpl implements IMDBGraph {
@@ -7,7 +7,14 @@ public class IMDBGraphImpl implements IMDBGraph {
     private final HashMap<String, ActorNode> actorMap = new HashMap<>();
     private final HashMap<String, MovieNode> movieMap = new HashMap<>();
 
-    public IMDBGraphImpl(String actorsFilename, String actressesFilename) throws IOException {
+
+    /**
+     * IMDBGraphImpl Constructor; parses provided data files
+     * @param actorsFilename file path to actors.list file
+     * @param actressesFilename file path to actresses.list file
+     * @throws FileNotFoundException with an incorrect filepath
+     */
+    public IMDBGraphImpl(String actorsFilename, String actressesFilename) throws FileNotFoundException {
         final Scanner actorScanner = new Scanner(new File(actorsFilename), "ISO-8859-1");
         final Scanner actressScanner = new Scanner(new File(actressesFilename), "ISO-8859-1");
 

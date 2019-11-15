@@ -15,6 +15,7 @@ public class GraphPartialTester {
 	IMDBGraph imdbGraph, imdbGraph10k;
 	GraphSearchEngine searchEngine;
 
+	@Before
 	/**
 	 * Instantiates the graph
 	 */
