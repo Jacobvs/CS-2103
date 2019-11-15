@@ -8,7 +8,7 @@ import java.io.*;
  * Code to test Project 3; you should definitely add more tests!
  */
 public class GraphPartialTester {
-	IMDBGraph imdbGraph;
+	IMDBGraph imdbGraph, imdbGraph10k;
 	GraphSearchEngine searchEngine;
 
 	/**
@@ -28,7 +28,7 @@ public class GraphPartialTester {
 	 * Instantiates the graph
 	 */
 	public void setUp () throws IOException {
-		imdbGraph = new IMDBGraphImpl("actors_test.list", "actresses_test.list");
+		imdbGraph = new IMDBGraphImpl("/Users/kids/git/CS-2103/Project3/actors_test.list", "/Users/kids/git/CS-2103/Project3/actresses_test.list");
 		searchEngine = new GraphSearchEngineImpl();
 	}
 
@@ -57,14 +57,23 @@ public class GraphPartialTester {
 		testFindNode(imdbGraph.getActors(), "Actress2");
 	}
 
+	@Test(timeout=5000)
+	public void testRightNum() throws IOException{
+		imdbGraph10k = new IMDBGraphImpl("actors10k.list", "actresses10k.list");
+		int numActors = imdbGraph10k.getActors().size();
+		System.out.println(numActors);
+		assertTrue(2100 < numActors && numActors < 2300);
+	}
+
 	/**
 	 * Verifies that the specific graph contains a node with the specified name
-	 * @param graph the IMDBGraph to search for the node
+	 * @param nodes the IMDBGraph to search for the node
 	 * @param name the name of the Node
 	 */
 	private static void testFindNode (Collection<? extends Node> nodes, String name) {
 		boolean found = false;
 		for (Node node : nodes) {
+			System.out.println(node.getName());
 			if (node.getName().trim().equals(name)) {
 				found = true;
 			}
