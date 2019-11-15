@@ -5,6 +5,9 @@ public class GraphSearchEngineImpl implements GraphSearchEngine {
     /**
      * Finds shortest path between two nodes by storing visited paths of the same length until the target node is found
      * Returns path when node is found, null otherwise
+     * @param s the start node.
+     * @param t the target node.
+     * @return Returns path
      */
     @SuppressWarnings("unchecked")
     public List<Node> findShortestPath(Node s, Node t) {
@@ -28,7 +31,7 @@ public class GraphSearchEngineImpl implements GraphSearchEngine {
                     if(!_visitedNodes.contains(node)) { // Check to see if we already visited this node, if so ignore it to avoid loops
                         _visitedNodes.add(node); // Adds neighbor to visited nodes
                         path.add(node);
-                        _pathsToVisit.add((LinkedList) path.clone()); // add cloned list to paths so we can still modify path
+                        _pathsToVisit.add((LinkedList) path.clone()); // Add cloned list to paths so we can still modify path
                         path.removeLast(); //This might be wrong, will the path stored in _pathsToVisit be changed? yes, but we can clone it to prevent this TODO: change
                     }
                 }
