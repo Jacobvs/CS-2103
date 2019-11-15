@@ -2,42 +2,41 @@ import java.util.*;
 
 public class GraphSearchEngineImpl implements GraphSearchEngine {
 
-    @Override
     /**
      * Finds shortest path between two nodes by storing visited paths of the same length until the target node is found
      * Returns path when node is found, null otherwise
      */
+    @SuppressWarnings("unchecked")
     public List<Node> findShortestPath(Node s, Node t) {
-        Queue<LinkedList<Node>> _visitedPaths = new ArrayDeque<LinkedList<Node>>(); // Stores paths that need to be searched
-        HashSet<Node> _visitedNodes = new HashSet<Node>(); // Stores list of visited nodes
+        Queue<LinkedList<Node>> _pathsToVisit = new ArrayDeque<>(); // Stores paths that need to be searched (need to use add to maintain FIFO order)
+        HashSet<Node> _visitedNodes = new HashSet<>(); // Stores list of visited nodes
 
-        LinkedList<Node> startList = new LinkedList<Node>(); // Starting with Queue containing list containing first node
+        LinkedList<Node> startList = new LinkedList<>(); // Starting with Queue containing list containing first node
         startList.add(s);
 
-        _visitedPaths.add(startList); // Adds list containing first node to nodesToVisit queue
 
-        while(_visitedPaths.size() > 0){ // While nodesToVisit is not empty
-            LinkedList<Node> temp = _visitedPaths.remove(); // sets temp LinkedList to first LinkedList in queue and removes it
+        _pathsToVisit.add(startList); // Adds list containing first node to nodesToVisit queue
 
-            //_visitedNodes.add(temp); // Adds removed Node to list of visited nodes
+        while(_pathsToVisit.size() > 0){ // While the queue is not empty, loop
+            LinkedList<Node> path = _pathsToVisit.remove(); // sets path LinkedList to first LinkedList in queue and removes it
 
-            for(Node neighbor: temp.getLast().getNeighbors()){ // For all the neighbors of temp, add them to nodesToVisit if unseen
-                if(neighbor.equals(t)){
-                    temp.add(neighbor);
-                    return temp;
+            for(Node node : path.getLast().getNeighbors()){ // For all the neighbors of path
+                if(node.equals(t)){ // if found end node, return path
+                    path.add(node);
+                    return path;
                 }
                 else{
-                    if(!_visitedNodes.contains(neighbor)) { // !! look at later
-                        _visitedNodes.add(neighbor); //adds neighbor to visited nodes
-                        temp.add(neighbor);
-                        _visitedPaths.add(temp);
-                        temp.removeLast(); //This might be wrong, will the temp stored in _visitedPaths be changed?
+                    if(!_visitedNodes.contains(node)) { // Check to see if we already visited this node, if so ignore it to avoid loops
+                        _visitedNodes.add(node); // Adds neighbor to visited nodes
+                        path.add(node);
+                        _pathsToVisit.add((LinkedList) path.clone()); // add cloned list to paths so we can still modify path
+                        path.removeLast(); //This might be wrong, will the path stored in _pathsToVisit be changed? yes, but we can clone it to prevent this TODO: change
                     }
                 }
 
             }
         }
-        return null; // !! maybe replace with throwing an exception when node is not found
+        return null; // Return null if no path is found
     }
 
 }

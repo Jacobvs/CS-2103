@@ -1,6 +1,5 @@
 import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.io.FileNotFoundException;
 import java.util.*;
 
 public class IMDBGraphImpl implements IMDBGraph {
@@ -8,14 +7,18 @@ public class IMDBGraphImpl implements IMDBGraph {
     private HashMap<String, ActorNode> actorMap = new HashMap<>();
     private HashMap<String, MovieNode> movieMap = new HashMap<>();
 
-    public IMDBGraphImpl(String actorsFilename, String actressesFilename) throws IOException {
-        final Scanner actorScanner = new Scanner(new File(actorsFilename), StandardCharsets.ISO_8859_1);
-        final Scanner actressScanner = new Scanner(new File(actressesFilename), StandardCharsets.ISO_8859_1);
+    public IMDBGraphImpl(String actorsFilename, String actressesFilename) throws FileNotFoundException {
+        final Scanner actorScanner = new Scanner(new File(actorsFilename), "ISO-8859-1");
+        final Scanner actressScanner = new Scanner(new File(actressesFilename), "ISO-8859-1");
 
         parseData(actorScanner); // Parse Data for both actors and actresses
         parseData(actressScanner);
     }
 
+    /**
+     * Scrapes passed in IMDB actor/actress data into Actor and Movie nodes and stores them in a hashmap
+     * @param scanner file scanner
+     */
     private void parseData(Scanner scanner) {
         boolean reachedStart = false, onlyTV = true; // Define variables
         Queue<MovieNode> moviesToUpdate = new ArrayDeque<>();
@@ -63,21 +66,39 @@ public class IMDBGraphImpl implements IMDBGraph {
         }
     }
 
+    /**
+     * Gets all ActorNodes from scraped data
+     * @return collection of ActorNodes
+     */
     @Override
     public Collection<? extends Node> getActors() {
         return actorMap.values();
     }
 
+    /**
+     * Gets all MovieNodes from scraped data
+     * @return collection of MovieNodes
+     */
     @Override
     public Collection<? extends Node> getMovies() {
         return movieMap.values();
     }
 
+    /**
+     * Gets specific ActorNode by name
+     * @param name the name of the requested actor
+     * @return specified ActorNode
+     */
     @Override
     public Node getActor(String name) {
         return actorMap.get(name);
     }
 
+    /**
+     * Gets specific MovieNode by name
+     * @param name the name of the requested movie
+     * @return specified MovieNode
+     */
     @Override
     public Node getMovie(String name) {
         return movieMap.get(name);

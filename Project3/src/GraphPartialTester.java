@@ -1,8 +1,11 @@
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.IOException;
 import java.util.*;
-import java.io.*;
+
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Code to test Project 3; you should definitely add more tests!
@@ -63,6 +66,20 @@ public class GraphPartialTester {
 		int numActors = imdbGraph10k.getActors().size();
 		System.out.println(numActors);
 		assertTrue(2100 < numActors && numActors < 2300);
+	}
+
+	@Test
+	public void testTest(){
+		Queue<LinkedList<String>> test = new ArrayDeque<>();
+		LinkedList<String> startList = new LinkedList<String>(); // Starting with Queue containing list containing first node
+		startList.add("a");
+		startList.add("b");
+		test.add((LinkedList) startList.clone());
+		System.out.println("test");
+		System.out.println(test.peek().toString());
+		startList.remove();
+		System.out.println(test.peek().toString());
+
 	}
 
 	/**
