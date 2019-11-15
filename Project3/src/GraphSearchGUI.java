@@ -72,7 +72,12 @@ public class GraphSearchGUI extends Application {
 	                                 ListView<String> resultsList, Label resultsLabel) {
 		if (! actorsList1.getSelectionModel().isEmpty() && ! actorsList2.getSelectionModel().isEmpty()) {
 			String actor1 = actorsList1.getSelectionModel().getSelectedItem();
+			System.out.println(actor1);
 			String actor2 = actorsList2.getSelectionModel().getSelectedItem();
+			System.out.println(actor2);
+			Node an1 = graph.getActor(actor1);
+			System.out.println(an1.getName());
+			System.out.println(an1.getNeighbors().isEmpty());
 			List<Node> shortestPath = _searchEngine.findShortestPath(graph.getActor(actor1),
 										 graph.getActor(actor2));
 			if (shortestPath == null) {

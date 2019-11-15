@@ -47,7 +47,8 @@ public class IMDBGraphImpl implements IMDBGraph {
                                     movieMap.put(movieName, mn); }
                                 movies.add(mn); // add to list of movies that
                                 moviesToUpdate.add(mn);
-                            } break;
+                            }
+                            break;
                         }
                     }
                 } if (line.equals("----\t\t\t------")) // Check for the start of the data if not reached yet
@@ -55,7 +56,7 @@ public class IMDBGraphImpl implements IMDBGraph {
             } else {
                 if (!onlyTV) { // create actor node then update all movies in queue with new actor info
                     ActorNode an = new ActorNode(actorName, movies);
-                    movies.clear(); // empty movie list
+                    movies = new ArrayList<>(); // empty movie list
                     actorMap.put(actorName, an); // put new actor in actor map
                     while (!moviesToUpdate.isEmpty()) {
                         mn = moviesToUpdate.poll(); // add actor to all the movies they starred in and remove from queue

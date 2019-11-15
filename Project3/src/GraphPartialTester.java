@@ -15,13 +15,13 @@ public class GraphPartialTester {
 	IMDBGraph imdbGraph, imdbGraph10k;
 	GraphSearchEngine searchEngine;
 
-	@Before
 	/**
 	 * Instantiates the graph
 	 */
 	public void setUp () throws IOException {
 		long start = System.nanoTime();
 		imdbGraph = new IMDBGraphImpl("/Users/kids/git/CS-2103/Project3/actors.list", "/Users/kids/git/CS-2103/Project3/actresses.list");
+		imdbGraph10k = new IMDBGraphImpl("/Users/kids/git/CS-2103/Project3/actors10k.list", "/Users/kids/git/CS-2103/Project3/actresses10k.list");
 		long end = System.nanoTime();
 		System.out.println(TimeUnit.NANOSECONDS.toSeconds(end-start));
 		searchEngine = new GraphSearchEngineImpl();
@@ -40,8 +40,7 @@ public class GraphPartialTester {
 	 * Verifies that there is no shortest path between a specific and actor and actress.
 	 */
 	@Test(timeout=5000)
-	public void findShortestPath () throws IOException {
-		imdbGraph = new IMDBGraphImpl("/Users/kids/git/CS-2103/Project3/actors_test.list", "/Users/kids/git/CS-2103/Project3/actresses_test.list");
+	public void findShortestPath () {
 		final Node actor1 = imdbGraph.getActor("Actor1");
 		final Node actress2 = imdbGraph.getActor("Actress2");
 		final List<Node> shortestPath = searchEngine.findShortestPath(actor1, actress2);
@@ -65,11 +64,21 @@ public class GraphPartialTester {
 	}
 
 	@Test(timeout=5000)
-	public void testRightNum() throws IOException{
-		imdbGraph10k = new IMDBGraphImpl("/Users/kids/git/CS-2103/Project3/actors10k.list", "/Users/kids/git/CS-2103/Project3/actresses10k.list");
+	public void testRightNum(){
 		int numActors = imdbGraph10k.getActors().size();
 		System.out.println(numActors);
 		assertTrue(2100 < numActors && numActors < 2300);
+	}
+
+	@Test
+	public void testGraphBuilding(){
+		for (Node n : imdbGraph10k.getActors()){
+			System.out.println(n.getName() + "\nMovies:");
+			for (Node mn : n.getNeighbors()){
+				System.out.println("neighbor: ");
+				System.out.print(mn.getName());
+			}
+		}
 	}
 
 
