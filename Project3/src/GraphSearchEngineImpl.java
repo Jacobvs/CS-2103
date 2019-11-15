@@ -11,6 +11,9 @@ public class GraphSearchEngineImpl implements GraphSearchEngine {
      */
     @SuppressWarnings("unchecked")
     public List<Node> findShortestPath(Node s, Node t) {
+        if(s == null || t == null)
+            return null;
+
         Queue<LinkedList<Node>> _pathsToVisit = new ArrayDeque<>(); // Stores paths that need to be searched (need to use add to maintain FIFO order)
         HashSet<Node> _visitedNodes = new HashSet<>(); // Stores list of visited nodes
 
@@ -18,6 +21,8 @@ public class GraphSearchEngineImpl implements GraphSearchEngine {
         startList.add(s);
         _pathsToVisit.add(startList); // Adds list containing first node to nodesToVisit queue
 
+        if(s.equals(t))
+            return startList;
 
         while(_pathsToVisit.size() > 0){ // While the queue is not empty, loop
             LinkedList<Node> path = _pathsToVisit.remove(); // sets path LinkedList to first LinkedList in queue and removes it
