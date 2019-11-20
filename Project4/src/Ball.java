@@ -1,4 +1,7 @@
 import java.awt.*;
+
+import javafx.geometry.Bounds;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
@@ -62,5 +65,27 @@ public class Ball {
 
 		circle.setTranslateX(x - (circle.getLayoutX() + BALL_RADIUS));
 		circle.setTranslateY(y - (circle.getLayoutY() + BALL_RADIUS));
+	}
+
+	public void inverseVelocity(){
+		vx *= -1;
+		vy *= -1;
+		System.out.println("paddle touch");
+	}
+
+	public void checkWallCollisions(Pane pane){
+		//TODO: fix repeated bounces
+		final Bounds bounds = pane.getBoundsInLocal();
+		final boolean atRightBorder = x >= (bounds.getMaxX() - circle.getRadius());
+		final boolean atLeftBorder = x <= (bounds.getMinX() + circle.getRadius());
+		final boolean atBottomBorder = y >= (bounds.getMaxY() - circle.getRadius());
+		final boolean atTopBorder = y <= (bounds.getMinY() + circle.getRadius());
+
+		if (atRightBorder || atLeftBorder) {
+			vx *= -1;
+		}
+		if (atBottomBorder || atTopBorder) {
+			vy *= -1;
+		}
 	}
 }

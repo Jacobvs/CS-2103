@@ -57,6 +57,8 @@ public class GameImpl extends Pane implements Game {
 		paddle = new Paddle();
 		getChildren().add(paddle.getRectangle());  // Add the paddle to the game board
 
+
+
 		// Add start message
 		final String message;
 		if (state == GameState.LOST) {
@@ -72,18 +74,20 @@ public class GameImpl extends Pane implements Game {
 		getChildren().add(startLabel);
 
 		// Add event handler to start the game
-		setOnMouseClicked(new EventHandler<MouseEvent> () {
-			@Override
-			public void handle (MouseEvent e) {
-				GameImpl.this.setOnMouseClicked(null);
+		setOnMouseClicked(e -> {
+			GameImpl.this.setOnMouseClicked(null);
 
-				// As soon as the mouse is clicked, remove the startLabel from the game board
-				getChildren().remove(startLabel);
-				run();
-			}
+			// As soon as the mouse is clicked, remove the startLabel from the game board
+			getChildren().remove(startLabel);
+			run();
 		});
 
 		// Add another event handler to steer paddle...
+
+		setOnMouseDragged(e -> {
+			GameImpl.this.setOnMouseMoved(null);
+			paddle.moveTo(e.getX(), e.getY());
+		});
 	}
 
 	/**
@@ -117,6 +121,10 @@ public class GameImpl extends Pane implements Game {
 	 * @return the current game state
 	 */
 	public GameState runOneTimestep (long deltaNanoTime) {
+
+		ball.checkWallCollisions(getPane());
+		if(ball.getCircle().intersects(paddle.getX(), paddle.getY(), paddle.getRectangle().getWidth(), paddle.getRectangle().getHeight()))
+			ball.inverseVelocity();
 		ball.updatePosition(deltaNanoTime);
 		return GameState.ACTIVE;
 	}
