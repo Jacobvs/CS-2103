@@ -1,9 +1,11 @@
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.control.Label;
 import javafx.animation.AnimationTimer;
-import javafx.scene.input.MouseEvent;
-import javafx.event.*;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 public class GameImpl extends Pane implements Game {
 	/**
@@ -23,9 +25,16 @@ public class GameImpl extends Pane implements Game {
 	 */
 	public static final int HEIGHT = 600;
 
+	public static final int BORDER = WIDTH/9;
+
+	public static final int fourthX = (WIDTH - BORDER)/4;
+	public static final int fourthY = (HEIGHT - BORDER)/8;
+
 	// Instance variables
 	private Ball ball;
 	private Paddle paddle;
+	private int numBottom, numTeleported;
+	private ArrayList<String> animalIDs;
 
 	/**
 	 * Constructs a new GameImpl.
@@ -52,17 +61,31 @@ public class GameImpl extends Pane implements Game {
 		getChildren().add(ball.getCircle());  // Add the ball to the game board
 
 		// Create and add animals ...
+		String[] fileNames = new String[]{"goat.jpg", "horse.jpg", "duck.jpg"};
+		animalIDs = new ArrayList<>();
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 4; j++) {
+				final Image image = new Image(getClass().getResourceAsStream(fileNames[new Random().nextInt(3)]));
+				Label imageLabel = new Label("", new ImageView(image));
+				imageLabel.setLayoutX((fourthX*i)+BORDER);
+				imageLabel.setLayoutY((fourthY*j)+BORDER);
+				imageLabel.setId("animal"+(i+j));
+				animalIDs.add(imageLabel.getId());
+				getChildren().add(imageLabel);
+			}
+		}
 
 		// Create and add paddle
 		paddle = new Paddle();
 		getChildren().add(paddle.getRectangle());  // Add the paddle to the game board
 
-
+		numBottom = 0;
+		numTeleported = 0;
 
 		// Add start message
 		final String message;
 		if (state == GameState.LOST) {
-			message = "Game Over\n";
+			message = "Game Over with " + (16 - numTeleported) + " animals remaining. \n";
 		} else if (state == GameState.WON) {
 			message = "You won!\n";
 		} else {
@@ -83,11 +106,7 @@ public class GameImpl extends Pane implements Game {
 		});
 
 		// Add another event handler to steer paddle...
-
-		setOnMouseDragged(e -> {
-			GameImpl.this.setOnMouseMoved(null);
-			paddle.moveTo(e.getX(), e.getY());
-		});
+		setOnMouseMoved(e -> paddle.moveTo(e.getX(), e.getY()));
 	}
 
 	/**
@@ -105,6 +124,7 @@ public class GameImpl extends Pane implements Game {
 						stop();
 						// Restart the game, with a message that depends on whether
 						// the user won or lost the game.
+						// TODO: add message
 						restartGame(state);
 					}
 				}
@@ -121,10 +141,14 @@ public class GameImpl extends Pane implements Game {
 	 * @return the current game state
 	 */
 	public GameState runOneTimestep (long deltaNanoTime) {
+		numBottom += ball.checkCollisions(getPane(), paddle);
+		numTeleported += ball.checkTeleportation(getPane(), animalIDs);
 
-		ball.checkWallCollisions(getPane());
-		if(ball.getCircle().intersects(paddle.getX(), paddle.getY(), paddle.getRectangle().getWidth(), paddle.getRectangle().getHeight()))
-			ball.inverseVelocity();
+		if(numBottom >= 5)
+			return GameState.LOST;
+		if(numTeleported >= 16)
+			return GameState.WON;
+
 		ball.updatePosition(deltaNanoTime);
 		return GameState.ACTIVE;
 	}
