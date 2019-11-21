@@ -75,7 +75,7 @@ public class GameImpl extends Pane implements Game {
 			message = "Game Over with " + (16 - numTeleported) + " animals remaining. \n";
 		else if (state == GameState.WON) {
 			winSound.play();
-			message = "You won!\n";
+			message = "You won! \n";
 		} else
 			message = "";
 
@@ -105,11 +105,10 @@ public class GameImpl extends Pane implements Game {
 		numBottom = 0;
 		numTeleported = 0;
 
-		// A bit of trickery to ensure the text is always centered as label.getWidth() == 0
-		final FontLoader fl = Toolkit.getToolkit().getFontLoader();
-		final Label startLabel = new Label(message + "Click mouse to start");
+		// Add and center text (whitespace to ensure label stays centered)
+		final Label startLabel = new Label(message + "                    Click mouse to start                    ");
 		startLabel.setTextAlignment(TextAlignment.CENTER);
-		startLabel.setLayoutX((WIDTH >> 1) - fl.computeStringWidth(startLabel.getText().split("\\n")[0], startLabel.getFont())/2);
+		startLabel.setLayoutX((WIDTH / 2) - 135);
 		startLabel.setLayoutY(HEIGHT / 2 + 100);
 		getChildren().add(startLabel);
 
