@@ -34,7 +34,6 @@ public class GameImpl extends Pane implements Game {
 	private Ball ball;
 	private Paddle paddle;
 	private int numBottom, numTeleported;
-	private ArrayList<String> animalIDs;
 
 	/**
 	 * Constructs a new GameImpl.
@@ -62,15 +61,13 @@ public class GameImpl extends Pane implements Game {
 
 		// Create and add animals ...
 		String[] fileNames = new String[]{"goat.jpg", "horse.jpg", "duck.jpg"};
-		animalIDs = new ArrayList<>();
 		for (int i = 0; i < 4; i++) {
 			for (int j = 0; j < 4; j++) {
 				final Image image = new Image(getClass().getResourceAsStream(fileNames[new Random().nextInt(3)]));
 				Label imageLabel = new Label("", new ImageView(image));
 				imageLabel.setLayoutX((fourthX*i)+BORDER);
 				imageLabel.setLayoutY((fourthY*j)+BORDER);
-				imageLabel.setId("animal"+(i+j));
-				animalIDs.add(imageLabel.getId());
+				imageLabel.setId("animal");
 				getChildren().add(imageLabel);
 			}
 		}
@@ -142,9 +139,9 @@ public class GameImpl extends Pane implements Game {
 	 */
 	public GameState runOneTimestep (long deltaNanoTime) {
 		numBottom += ball.checkCollisions(getPane(), paddle);
-		numTeleported += ball.checkTeleportation(getPane(), animalIDs);
+		numTeleported += ball.checkTeleportation(getPane());
 
-		if(numBottom >= 5)
+		if(numBottom >= 1)
 			return GameState.LOST;
 		if(numTeleported >= 16)
 			return GameState.WON;
