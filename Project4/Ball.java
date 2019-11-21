@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.util.ArrayList;
 
 import javafx.geometry.Bounds;
@@ -25,15 +26,12 @@ public class Ball {
 	 */
 	public static final double INITIAL_VY = 1e-7;
 
-	public static final double SPEED_INCREASE = 1.13;
-
 	// Instance variables
 	// (x,y) is the position of the center of the ball.
 	private double x, y;
 	private double vx, vy;
 	private Circle circle;
-	private Boolean pColliding;
-
+	private Boolean colliding;
 
 	/**
 	 * @return the Circle object that represents the ball on the game board.
@@ -52,6 +50,7 @@ public class Ball {
 		vx = INITIAL_VX;
 		vy = INITIAL_VY;
 
+		colliding = false;
 
 		circle = new Circle(BALL_RADIUS, BALL_RADIUS, BALL_RADIUS);
 		circle.setLayoutX(x - BALL_RADIUS);
@@ -70,55 +69,41 @@ public class Ball {
 		x += dx;
 		y += dy;
 
-		System.out.println("x : " + x + " y: " + y);
-
-
 		circle.setTranslateX(x - (circle.getLayoutX() + BALL_RADIUS));
 		circle.setTranslateY(y - (circle.getLayoutY() + BALL_RADIUS));
 	}
 
 	public int checkCollisions(Pane pane, Paddle paddle){
-		//TODO: fix repeated bounces off walls (don't inverse velocity again till off paddle/wall)
-		Boolean left, right, top, bottom;
+		//TODO: fix repeated bounces off walls (add boolean to check if still on wall/paddle)
+		final Bounds bounds = pane.getBoundsInLocal();
 
-		// If at left border inverse x velocity
-		right = (x >= (400 - BALL_RADIUS));
-		left = (x <= BALL_RADIUS);
+		// If at right or left border inverse x velocity
+		if(x >= (bounds.getMaxX() - BALL_RADIUS) || x <= (bounds.getMinX() + BALL_RADIUS))
+			vx *= -1;
 		// If at top border inverse y velocity
-		top = (y <= BALL_RADIUS);
+		else if(y <= (bounds.getMinY() + BALL_RADIUS))
+			vy*= -1;
 		// If at bottom border increase counter & inverse y velocity
-		bottom = (y >= (600 - BALL_RADIUS));
-
-		if(right && vx > 0)
-			vx *= -1;
-		else if(left && vx < 0)
-			vx *= -1;
-		else if(top && vy < 0)
+		else if(y >= (bounds.getMaxY() - BALL_RADIUS)){
 			vy *= -1;
-		else if(bottom && vy > 0)
-			vy *= -1;
-
-		if(bottom)
-		    return 1;
+			return 1; // Touched bottom
+		}
 
 		// Check if ball is colliding with paddle
-		if(this.circle.getBoundsInParent().intersects(paddle.getRectangle().getBoundsInParent())) {
-		    if(!pColliding)
-                vy *= -1;
-        }
-		else
-		    pColliding = false;
+		if(this.circle.getBoundsInParent().intersects(paddle.getRectangle().getBoundsInParent()))
+			vy *= -1;
 
 		return 0; // Did not touch bottom
 	}
 
-	public int checkTeleportation(Pane pane){
+	public int checkTeleportation(Pane pane, ArrayList<String> animalIds){
 		// if animal teleported, set vx and vy to 1.25x speed
 		for(Node n : pane.getChildren())
-			if(n.getId() != null){
+			if(animalIds.contains(n.getId())){
 				if(this.circle.getBoundsInParent().intersects(n.getBoundsInParent())){
-					vx *= SPEED_INCREASE;
-					vy *= SPEED_INCREASE;
+					System.out.println("Hit animal");
+					vx *= 1.1;
+					vy *= 1.1;
 					if(this.x > n.getLayoutX() || this.x < n.getLayoutY()){
 						vx *= -1;
 						pane.getChildren().remove(n);
