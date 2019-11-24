@@ -1,6 +1,3 @@
-import com.sun.javafx.tk.FontLoader;
-import com.sun.javafx.tk.Toolkit;
-import javafx.geometry.Pos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -81,6 +78,7 @@ public class GameImpl extends Pane implements Game {
 
 		// Create and add animals ...
 		String[] fileNames = new String[]{"goat.jpg", "horse.jpg", "duck.jpg"}; // Holds the possibe image filenames to be placed
+
 		for (int i = 0; i < 4; i++) { // Create 4 lines of cells for the x axis
 			for (int j = 0; j < 4; j++) { // 4 lines for y axis
 				final Image image = new Image(getClass().getResourceAsStream(fileNames[new Random().nextInt(fileNames.length)])); // Retrieve random image from arr of filenames
@@ -150,7 +148,7 @@ public class GameImpl extends Pane implements Game {
 	}
 
 	/**
-	 * Updates the state of the game at each timestep. In particular, this method should
+	 * Updates the state of the game at each time-step. In particular, this method should
 	 * move the ball, check if the ball collided with any of the animals, walls, or the paddle, etc.
 	 * @param deltaNanoTime how much time (in nanoseconds) has transpired since the last update
 	 * @return the current game state

@@ -103,9 +103,9 @@ public class Ball {
 		// Check if ball is colliding with paddle
 		if(this.circle.getBoundsInParent().intersects(paddle.getRectangle().getBoundsInParent())) {
 			paddleSound.play();
-			if(y < paddle.getY() && vy > 0)
+			if(y < paddle.getY() && vy > 0) // If ball is hitting the top half of the paddle, reflect velocity
 				vy *= -1;
-			else if(y > paddle.getY() && vy < 0)
+			else if(y > paddle.getY() && vy < 0) // Same but for bottom half
 				vy *= -1;
 		}
 	}
@@ -118,15 +118,16 @@ public class Ball {
 	int checkTeleportation(Pane pane){
 		// if animal teleported, increase velocity
 		for(Node n : pane.getChildren())
-			if(n.getId() != null){
-				Bounds bound = n.getBoundsInParent();
-				if(this.circle.getBoundsInParent().intersects(bound)){
-					vx *= SPEED_INCREASE;
+			if(n.getId() != null){ // If the node has an ID, it's an animal node
+				Bounds bound = n.getBoundsInParent(); // Retrieve the bounds of the image
+				if(this.circle.getBoundsInParent().intersects(bound)){ // Check if the ball intersects the image
+					vx *= SPEED_INCREASE; // Increase velocity
 					vy *= SPEED_INCREASE;
 
-					teleportSound.play();
-					pane.getChildren().remove(n);
+					teleportSound.play(); // Play teleport sound
+					pane.getChildren().remove(n); // "Teleport" animal
 
+					// Check if the ball has touched the top half of the animal or the bottom & that the velocity is facing the animal
 					if(((x >= (bound.getMinX() - BALL_RADIUS)) && vx > 0) || ((x <= (bound.getMaxX() + BALL_RADIUS)) && vx < 0))
 						vx *= -1;
 					else
