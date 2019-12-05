@@ -1,4 +1,4 @@
-public class AdditiveExpression implements CompoundExpression {
+public class AdditiveExpression extends SimpleCompoundExpression {
     @Override
     public void addSubexpression(Expression subexpression) {
 

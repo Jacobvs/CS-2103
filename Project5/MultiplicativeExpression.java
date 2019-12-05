@@ -1,31 +1,15 @@
-public class MultiplicativeExpression implements CompoundExpression {
-    @Override
-    public void addSubexpression(Expression subexpression) {
+import java.util.ArrayList;
 
+public class MultiplicativeExpression extends SimpleCompoundExpression {
+
+    public MultiplicativeExpression(){
+        super();
+        value = "*";
     }
 
     @Override
-    public CompoundExpression getParent() {
-        return null;
-    }
+    public void flatten() {}
 
     @Override
-    public void setParent(CompoundExpression parent) {
-
-    }
-
-    @Override
-    public Expression deepCopy() {
-        return null;
-    }
-
-    @Override
-    public void flatten() {
-
-    }
-
-    @Override
-    public void convertToString(StringBuilder stringBuilder, int indentLevel) {
-
-    }
+    public void convertToString(StringBuilder stringBuilder, int indentLevel) {}
 }
