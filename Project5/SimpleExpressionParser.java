@@ -37,12 +37,16 @@ public class SimpleExpressionParser implements ExpressionParser {
         return null;
     }
 
-    boolean parseHelper(String str, String regex, Function<String, Boolean> m) {
+    //TODO: UNBREAK THIS
+
+    // Create Expression based upon the
+    Expression parseHelper(String str, String regex, Function<String, Expression> m) {
         if (str.matches(regex)){
             String[] arr = str.split(regex);
-            for(String s : arr)
-                if(m.apply(s))
-                    return true;
+            for(String s : arr){
+
+            }
+
         }
         else{
             m.apply(str);
@@ -50,16 +54,32 @@ public class SimpleExpressionParser implements ExpressionParser {
         return false;
     }
 
-    boolean parseA(String str){
+    Expression parseA(String str){
         return parseHelper(str, "[^a-z0-9* ()]+(?![^\\(]*\\))", this::parseM);
     }
-    boolean parseM(String str){
+    Expression parseM(String str){
         return parseHelper(str, "[^a-z0-9+ ()]+(?![^\\(]*\\))", this::parseP);
     }
-    boolean parseP(String str){
-        return parseHelper(str, "(\\a)", this::parseL);
+
+    //TODO: implement flattening of parenthesis
+    Expression parseP(String str, Expression e){
+        if(str.indexOf('(') > -1) {
+            int first = str.indexOf('('), count = 0, last = 0;
+            for (int i = first; i < str.length(); i++) {
+                if (str.charAt(i) == '(')
+                    count++;
+                else if (str.charAt(i) == ')')
+                    count--;
+                if (count == 0) {
+                    last = i;
+                    break;
+                }
+            }
+            return new ParentheticalExpression(str.substring(first + 1, last - 1));
+        }
+
     }
-    boolean parseL(String str){
+    Expression parseL(String str){
         if(str.length() == 0)
              return true;
         return parseHelper(str, "[a-z]|[0-9]+", this::parseL);
