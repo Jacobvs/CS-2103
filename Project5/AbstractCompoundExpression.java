@@ -2,21 +2,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AbstractCompoundExpression implements CompoundExpression {
-    private List<Expression> children;
-    private CompoundExpression parent;
-    private String val;
+    protected List<Expression> children;
+    protected CompoundExpression parent;
+    protected String val;
 
     public AbstractCompoundExpression(String val){
         this.val = val;
         this.children = new ArrayList<>();
+        this.parent = null;
     }
-    public AbstractCompoundExpression(String val, CompoundExpression parent){
-        this(val);
-        this.parent = parent;
-    }
+
 
     @Override
     public void addSubexpression(Expression subexpression) {
+        subexpression.setParent(this);
         this.children.add(subexpression);
     }
 
@@ -33,7 +32,6 @@ public class AbstractCompoundExpression implements CompoundExpression {
     public void setParent(CompoundExpression parent) {
         this.parent = parent;
     }
-
 
     // recursively calls itself on child nodes to deep copy tree
     // for each node make a new node with

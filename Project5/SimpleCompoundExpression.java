@@ -1,14 +1,19 @@
 import java.util.ArrayList;
 
+/**
+ * THIS CLASS IS THE SAME AS ABSTRACTCOMPOUNDEXPRESSION DELETE LATER
+ */
+
+
 public class SimpleCompoundExpression implements CompoundExpression{
 
-    ArrayList<Expression> subExpressions;
-    CompoundExpression parent;
-    String value;
+    private ArrayList<Expression> subExpressions;
+    private CompoundExpression parent;
+    private String value;
 
     public SimpleCompoundExpression(){
         this.subExpressions = new ArrayList<Expression>();
-        parent = null;
+        this.parent = null;
     }
 
     @Override

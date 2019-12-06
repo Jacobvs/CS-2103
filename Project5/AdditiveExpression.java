@@ -1,24 +1,14 @@
-public class AdditiveExpression extends SimpleCompoundExpression {
-    @Override
-    public void addSubexpression(Expression subexpression) {
+import java.util.ArrayList;
 
+public class AdditiveExpression extends AbstractCompoundExpression {
+
+    public AdditiveExpression(String val) {
+        super("+");
     }
 
-    @Override
-    public CompoundExpression getParent() {
-        return null;
-    }
-
-    @Override
-    public void setParent(CompoundExpression parent) {
-
-    }
-
-    @Override
-    public Expression deepCopy() {
-        return null;
-    }
-
+    /**
+     * Do not need, tree is parsed in a way that makes this obsolete
+     */
     @Override
     public void flatten() {
 
