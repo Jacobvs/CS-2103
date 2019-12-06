@@ -1,21 +1,13 @@
-public abstract class LiteralExpression implements Expression {
+public class LiteralExpression implements Expression {
     private CompoundExpression parent;
-    private String sVal;
-    private double dVal;
-    private boolean isNum;
+    private String val;
 
     public LiteralExpression(String val){
-        sVal = val;
-        isNum = false;
+        this.val = val;
     }
 
-    public LiteralExpression(double val){
-        dVal = val;
-        isNum = true;
-    }
-
-    public Object getVal(){
-        return isNum ? dVal : sVal;
+    public String getVal(){
+        return val;
     }
 
     @Override
@@ -30,12 +22,16 @@ public abstract class LiteralExpression implements Expression {
 
     @Override
     public Expression deepCopy() {
-        return this;
+        return new LiteralExpression(val);
     }
 
-    //TODO check if needs to backtrack to flatten?
     @Override
     public void flatten() {
-        return;
+    }
+
+    @Override
+    public void convertToString(StringBuilder stringBuilder, int indentLevel) {
+
+        stringBuilder.append(val);
     }
 }

@@ -1,31 +1,10 @@
-public class ParentheticalExpression implements CompoundExpression {
-    @Override
-    public void addSubexpression(Expression subexpression) {
+public class ParentheticalExpression extends AbstractCompoundExpression {
 
+    public ParentheticalExpression(String val) {
+        super(val);
     }
 
-    @Override
-    public CompoundExpression getParent() {
-        return null;
-    }
-
-    @Override
-    public void setParent(CompoundExpression parent) {
-
-    }
-
-    @Override
-    public Expression deepCopy() {
-        return null;
-    }
-
-    @Override
-    public void flatten() {
-
-    }
-
-    @Override
-    public void convertToString(StringBuilder stringBuilder, int indentLevel) {
-
+    public ParentheticalExpression(String val, CompoundExpression parent) {
+        super(val, parent);
     }
 }
