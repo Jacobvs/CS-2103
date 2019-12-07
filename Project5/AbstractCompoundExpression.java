@@ -1,17 +1,17 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class AbstractCompoundExpression implements CompoundExpression {
-    protected List<Expression> children;
-    protected CompoundExpression parent;
-    protected String val;
+public abstract class AbstractCompoundExpression implements CompoundExpression {
+    private List<Expression> children;
+    private CompoundExpression parent;
+    private String operator;
+    private String val;
 
-    public AbstractCompoundExpression(String val){
+    public AbstractCompoundExpression(String val, CompoundExpression parent){
         this.val = val;
         this.children = new ArrayList<>();
-        this.parent = null;
+        this.parent = parent;
     }
-
 
     @Override
     public void addSubexpression(Expression subexpression) {
@@ -21,6 +21,14 @@ public class AbstractCompoundExpression implements CompoundExpression {
 
     public List<Expression> getSubexpressions(){
         return this.children;
+    }
+
+    public String getVal(){
+        return val;
+    }
+
+    public void setOperator(String operator) {
+        this.operator = operator;
     }
 
     @Override
@@ -37,9 +45,21 @@ public class AbstractCompoundExpression implements CompoundExpression {
     // for each node make a new node with
     @Override
     public Expression deepCopy() {
-        AbstractCompoundExpression e = new AbstractCompoundExpression(val);
+        Expression e = null;
         for(Expression c : children){
-            e.addSubexpression(c.deepCopy());
+            if(c instanceof  LiteralExpression) {
+                e = new LiteralExpression(((LiteralExpression) c).getVal());
+            }
+            else {
+                if (c instanceof AdditiveExpression) {
+                    e = new AdditiveExpression(((AdditiveExpression) c).getVal());
+                } else if (c instanceof MultiplicativeExpression) {
+                    e = new MultiplicativeExpression(((MultiplicativeExpression) c).getVal());
+                } else if (c instanceof ParentheticalExpression){
+                    e = new ParentheticalExpression(((ParentheticalExpression) c).getVal());
+                }
+                ((AbstractCompoundExpression) e).addSubexpression(c.deepCopy());
+            }
         }
         return e;
     }
@@ -51,6 +71,12 @@ public class AbstractCompoundExpression implements CompoundExpression {
 
     @Override
     public void convertToString(StringBuilder stringBuilder, int indentLevel){
-
+        for (int i = 0; i < indentLevel; i++) {
+            stringBuilder.append("\t");
+        }
+        stringBuilder.append(operator + "\n");
+        for(Expression e : children){
+            e.convertToString(stringBuilder, indentLevel + 1);
+        }
     }
 }

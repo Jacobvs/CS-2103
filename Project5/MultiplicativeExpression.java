@@ -2,16 +2,12 @@ import java.util.ArrayList;
 
 public class MultiplicativeExpression extends AbstractCompoundExpression {
 
-    public MultiplicativeExpression(){
-        super("*");
+    public MultiplicativeExpression(String val, CompoundExpression parent) {
+        super(val, parent);
+        super.setOperator("*");
     }
 
-    /**
-     * Do not need, tree is parsed in a way that makes this obsolete
-     */
-    @Override
-    public void flatten() {}
-
-    @Override
-    public void convertToString(StringBuilder stringBuilder, int indentLevel) {}
+    public MultiplicativeExpression(String val){
+        this(val, null);
+    }
 }

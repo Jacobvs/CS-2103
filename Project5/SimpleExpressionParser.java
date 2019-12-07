@@ -1,4 +1,4 @@
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 /**
  * Starter code to implement an ExpressionParser. Your parser methods should use the following grammar:
@@ -33,36 +33,42 @@ public class SimpleExpressionParser implements ExpressionParser {
 
     protected Expression parseExpression(String str) {
         Expression expression;
-        parseA(str);
+        parseA(str, null);
         return null;
     }
 
     //TODO: UNBREAK THIS
 
     // Create Expression based upon the
-    Expression parseHelper(String str, String regex, Function<String, Expression> m) {
+    void parseHelper(String str, String regex, int type, CompoundExpression prev, BiFunction<String, Expression, Expression> m) {
+        AbstractCompoundExpression e;
         if (str.matches(regex)){
+            switch(type){
+                case 0:
+                    e = new AdditiveExpression(str, prev);
+                default:
+                    e = new MultiplicativeExpression(str, prev);
+            }
             String[] arr = str.split(regex);
             for(String s : arr){
-
+                e.addSubexpression(m.apply(s, e));
             }
 
         }
         else{
-            m.apply(str);
+            m.apply(str, prev);
         }
-        return false;
     }
 
-    Expression parseA(String str){
-        return parseHelper(str, "[^a-z0-9* ()]+(?![^\\(]*\\))", this::parseM);
+    void parseA(String str, Expression e){
+        return parseHelper(str, "[^a-z0-9* ()]+(?![^\\(]*\\))", 0, this::parseM);
     }
-    Expression parseM(String str){
-        return parseHelper(str, "[^a-z0-9+ ()]+(?![^\\(]*\\))", this::parseP);
+    void parseM(String str, Expression e){
+        return parseHelper(str, "[^a-z0-9+ ()]+(?![^\\(]*\\))", 1, this::parseP);
     }
 
     //TODO: implement flattening of parenthesis
-    Expression parseP(String str, Expression e){
+    void parseP(String str, Expression e){
         if(str.indexOf('(') > -1) {
             int first = str.indexOf('('), count = 0, last = 0;
             for (int i = first; i < str.length(); i++) {
@@ -79,7 +85,7 @@ public class SimpleExpressionParser implements ExpressionParser {
         }
 
     }
-    Expression parseL(String str){
+    void parseL(String str){
         if(str.length() == 0)
              return true;
         return parseHelper(str, "[a-z]|[0-9]+", this::parseL);
