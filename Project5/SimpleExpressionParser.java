@@ -1,4 +1,6 @@
 import java.util.function.BiFunction;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Starter code to implement an ExpressionParser. Your parser methods should use the following grammar:
@@ -39,7 +41,11 @@ public class SimpleExpressionParser implements ExpressionParser {
     // Create Expression based upon the
     Expression parseHelper(String str, String regex, int type, CompoundExpression prev, BiFunction<String, CompoundExpression, Expression> m) {
         AbstractCompoundExpression e;
-        if (str.matches(regex)){
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(str);
+        if(str.length() > 2 && str.charAt(0) == '(' && str.charAt(str.length()-1) == ')')
+            return m.apply(str, prev);
+        if (matcher.find()){
             if(type == 0)
                 e = new AdditiveExpression(str, prev);
             else
@@ -50,6 +56,7 @@ public class SimpleExpressionParser implements ExpressionParser {
             int count = 0;
             for(String s : arr){
                 System.out.println(count);
+                count++;
                 if(s.length() == 0)
                     return null;
                 e.addSubexpression(m.apply(s, e));
@@ -73,6 +80,7 @@ public class SimpleExpressionParser implements ExpressionParser {
     //TODO: implement flattening of parenthesis
     Expression parseP(String str, CompoundExpression e){
         System.out.println("par");
+        ParentheticalExpression pe;
         if(str.indexOf('(') > -1) {
             int first = str.indexOf('('), count = 0, last = 0;
             for (int i = first; i < str.length(); i++) {
@@ -82,8 +90,11 @@ public class SimpleExpressionParser implements ExpressionParser {
                     count--;
                 if (count == 0) {
                     last = i;
-                    if(last-first >= 1)
-                        return parseHelper(str.substring(first+1, last), "[^a-z0-9* ()]+(?![^\\(]*\\))", 0, e, this::parseM);
+                    if(last-first >= 1) {
+                        pe = new ParentheticalExpression(str.substring(first + 1, last), e);
+                        pe.addSubexpression(parseHelper(str.substring(first + 1, last), "[^a-z0-9* ()]+(?![^\\(]*\\))", 0, e, this::parseA));
+                        return pe;
+                    }
                 }
             }
         }
