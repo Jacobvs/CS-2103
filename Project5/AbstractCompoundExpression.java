@@ -7,42 +7,74 @@ public abstract class AbstractCompoundExpression implements CompoundExpression {
     private String operator;
     private String val;
 
+    /**
+     * Sets val to parameter, parent to parameter and initializes children as empty
+     * @param val Value of the expression
+     * @param parent Parent of the expression
+     */
     public AbstractCompoundExpression(String val, CompoundExpression parent){
         this.val = val;
         this.children = new ArrayList<>();
         this.parent = parent;
     }
 
+    /**
+     * Adds expression to the list of children (representing subexpressions)
+     * @param subexpression the child expression to add
+     */
     @Override
     public void addSubexpression(Expression subexpression) {
         subexpression.setParent(this);
         this.children.add(subexpression);
     }
 
+    /**
+     * Getter for list of children
+     * @return List of children that represents subexpressions
+     */
     public List<Expression> getSubexpressions(){
         return this.children;
     }
 
+    /**
+     * Getter for value variable
+     * @return Value of expression
+     */
     public String getVal(){
         return val;
     }
 
+    /**
+     * Sets operator of expression
+     * @param operator New operator of expression ("*", "+" or "()")
+     */
     public void setOperator(String operator) {
         this.operator = operator;
     }
 
+    /**
+     * Getter for parent of expressionn
+     * @return CompoundExpression that is parent node to current expression
+     */
     @Override
     public CompoundExpression getParent() {
         return this.parent;
     }
 
+    /**
+     * Setter for parent field
+     * @param parent the CompoundExpression that should be the parent of the target object
+     */
     @Override
     public void setParent(CompoundExpression parent) {
         this.parent = parent;
     }
 
-    // recursively calls itself on child nodes to deep copy tree
-    // for each node make a new node with
+    /**
+     * Makes a deep copy of the bst starting at the root node
+     * Continually makes deep copy of children starting from top of tree
+     * @return Deep copy of expression
+     */
     @Override
     public Expression deepCopy() {
         Expression e = null;
@@ -62,11 +94,18 @@ public abstract class AbstractCompoundExpression implements CompoundExpression {
         return e;
     }
 
-    //Parsing automatically flattens so no need to implement
+    /**
+     * Flattens tree, no need to implement because method of parsing automatically does this
+     */
     @Override
     public void flatten() {
     }
 
+    /**
+     * Prints out BST as a string with different amounts of indentation for different levels
+     * @param stringBuilder the StringBuilder to use for building the String representation
+     * @param indentLevel the indentation level (number of tabs from the left margin) at which to start
+     */
     @Override
     public void convertToString(StringBuilder stringBuilder, int indentLevel){
         for (int i = 0; i < indentLevel; i++) {
