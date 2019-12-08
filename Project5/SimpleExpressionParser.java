@@ -32,43 +32,40 @@ public class SimpleExpressionParser implements ExpressionParser {
     }
 
     protected Expression parseExpression(String str) {
-        Expression expression;
-        parseA(str, null);
-        return null;
+        Expression e = parseA(str, null);
+        return e;
     }
 
-    //TODO: UNBREAK THIS
-
     // Create Expression based upon the
-    void parseHelper(String str, String regex, int type, CompoundExpression prev, BiFunction<String, Expression, Expression> m) {
+    Expression parseHelper(String str, String regex, int type, CompoundExpression prev, BiFunction<String, CompoundExpression, Expression> m) {
         AbstractCompoundExpression e;
         if (str.matches(regex)){
-            switch(type){
-                case 0:
-                    e = new AdditiveExpression(str, prev);
-                default:
-                    e = new MultiplicativeExpression(str, prev);
-            }
+            if(type == 0)
+                e = new AdditiveExpression(str, prev);
+            else
+                e = new MultiplicativeExpression(str, prev);
+            if(type == 2)
+                return m.apply(str, e);
             String[] arr = str.split(regex);
             for(String s : arr){
                 e.addSubexpression(m.apply(s, e));
             }
-
         }
         else{
-            m.apply(str, prev);
+            return m.apply(str, prev);
         }
+        return e;
     }
 
-    void parseA(String str, Expression e){
-        return parseHelper(str, "[^a-z0-9* ()]+(?![^\\(]*\\))", 0, this::parseM);
+    Expression parseA(String str, CompoundExpression e){
+        return parseHelper(str, "[^a-z0-9* ()]+(?![^\\(]*\\))", 0, e, this::parseM);
     }
-    void parseM(String str, Expression e){
-        return parseHelper(str, "[^a-z0-9+ ()]+(?![^\\(]*\\))", 1, this::parseP);
+    Expression parseM(String str, CompoundExpression e){
+        return parseHelper(str, "[^a-z0-9+ ()]+(?![^\\(]*\\))", 1, e, this::parseP);
     }
 
     //TODO: implement flattening of parenthesis
-    void parseP(String str, Expression e){
+    Expression parseP(String str, CompoundExpression e){
         if(str.indexOf('(') > -1) {
             int first = str.indexOf('('), count = 0, last = 0;
             for (int i = first; i < str.length(); i++) {
@@ -81,13 +78,12 @@ public class SimpleExpressionParser implements ExpressionParser {
                     break;
                 }
             }
-            return new ParentheticalExpression(str.substring(first + 1, last - 1));
+            return parseHelper(str.substring(first+1, last-1), "[^a-z0-9* ()]+(?![^\\(]*\\))", 0, e, this::parseM);
         }
-
+        return parseHelper(str, "[a-z]|[0-9]+", 2, e, this::parseL);
     }
-    void parseL(String str){
-        if(str.length() == 0)
-             return true;
-        return parseHelper(str, "[a-z]|[0-9]+", this::parseL);
+
+    Expression parseL(String str, CompoundExpression e){
+        return new LiteralExpression(str, e);
     }
 }

@@ -2,8 +2,13 @@ public class LiteralExpression implements Expression {
     private CompoundExpression parent;
     private String val;
 
-    public LiteralExpression(String val){
+    public LiteralExpression(String val, CompoundExpression parent){
+        this.parent = parent;
         this.val = val;
+    }
+
+    public LiteralExpression(String val){
+        this(val, null);
     }
 
     public String getVal(){

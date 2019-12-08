@@ -47,17 +47,15 @@ public abstract class AbstractCompoundExpression implements CompoundExpression {
     public Expression deepCopy() {
         Expression e = null;
         for(Expression c : children){
-            if(c instanceof  LiteralExpression) {
-                e = new LiteralExpression(((LiteralExpression) c).getVal());
-            }
+            if(c instanceof  LiteralExpression)
+                e = c.deepCopy();
             else {
-                if (c instanceof AdditiveExpression) {
+                if (c instanceof AdditiveExpression)
                     e = new AdditiveExpression(((AdditiveExpression) c).getVal());
-                } else if (c instanceof MultiplicativeExpression) {
+                else if (c instanceof MultiplicativeExpression)
                     e = new MultiplicativeExpression(((MultiplicativeExpression) c).getVal());
-                } else if (c instanceof ParentheticalExpression){
+                else if (c instanceof ParentheticalExpression)
                     e = new ParentheticalExpression(((ParentheticalExpression) c).getVal());
-                }
                 ((AbstractCompoundExpression) e).addSubexpression(c.deepCopy());
             }
         }
