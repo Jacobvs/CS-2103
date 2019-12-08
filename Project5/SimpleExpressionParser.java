@@ -47,7 +47,11 @@ public class SimpleExpressionParser implements ExpressionParser {
             if(type == 2)
                 return m.apply(str, e);
             String[] arr = str.split(regex);
+            int count = 0;
             for(String s : arr){
+                System.out.println(count);
+                if(s.length() == 0)
+                    return null;
                 e.addSubexpression(m.apply(s, e));
             }
         }
@@ -58,14 +62,17 @@ public class SimpleExpressionParser implements ExpressionParser {
     }
 
     Expression parseA(String str, CompoundExpression e){
+        System.out.println("additive");
         return parseHelper(str, "[^a-z0-9* ()]+(?![^\\(]*\\))", 0, e, this::parseM);
     }
     Expression parseM(String str, CompoundExpression e){
+        System.out.println("mult");
         return parseHelper(str, "[^a-z0-9+ ()]+(?![^\\(]*\\))", 1, e, this::parseP);
     }
 
     //TODO: implement flattening of parenthesis
     Expression parseP(String str, CompoundExpression e){
+        System.out.println("par");
         if(str.indexOf('(') > -1) {
             int first = str.indexOf('('), count = 0, last = 0;
             for (int i = first; i < str.length(); i++) {
@@ -75,15 +82,16 @@ public class SimpleExpressionParser implements ExpressionParser {
                     count--;
                 if (count == 0) {
                     last = i;
-                    break;
+                    if(last-first >= 1)
+                        return parseHelper(str.substring(first+1, last), "[^a-z0-9* ()]+(?![^\\(]*\\))", 0, e, this::parseM);
                 }
             }
-            return parseHelper(str.substring(first+1, last-1), "[^a-z0-9* ()]+(?![^\\(]*\\))", 0, e, this::parseM);
         }
         return parseHelper(str, "[a-z]|[0-9]+", 2, e, this::parseL);
     }
 
     Expression parseL(String str, CompoundExpression e){
+        System.out.println("lit");
         return new LiteralExpression(str, e);
     }
 }
