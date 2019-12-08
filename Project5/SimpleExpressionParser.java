@@ -11,6 +11,9 @@ import java.util.regex.Pattern;
  * L := [0-9]+ | [a-z]
  */
 public class SimpleExpressionParser implements ExpressionParser {
+
+    private Boolean firstNode;
+
     /**
      * Attempts to create an expression tree -- flattened as much as possible -- from the specified String.
      * Throws a ExpressionParseException if the specified string cannot be parsed.
@@ -34,8 +37,8 @@ public class SimpleExpressionParser implements ExpressionParser {
     }
 
     protected Expression parseExpression(String str) {
-        Expression e = parseA(str, null);
-        return e;
+        firstNode = true;
+        return parseA(str, null);
     }
 
     // Create Expression based upon the
@@ -57,9 +60,14 @@ public class SimpleExpressionParser implements ExpressionParser {
             for(String s : arr){
                 System.out.println(count);
                 count++;
-                if(s.length() == 0)
+                if(str.charAt(str.length()-1) == '+' || str.charAt(str.length()-1) == '*')
+                    return null; // raise one here
+                Expression c = m.apply(s, e);
+                if(c == null)
                     return null;
-                e.addSubexpression(m.apply(s, e));
+                firstNode = false;
+                e.addSubexpression(c);
+
             }
         }
         else{
@@ -79,6 +87,8 @@ public class SimpleExpressionParser implements ExpressionParser {
 
     //TODO: implement flattening of parenthesis
     Expression parseP(String str, CompoundExpression e){
+        if(e == null && !firstNode)
+            return null;
         System.out.println("par");
         ParentheticalExpression pe;
         if(str.indexOf('(') > -1) {
@@ -91,8 +101,12 @@ public class SimpleExpressionParser implements ExpressionParser {
                 if (count == 0) {
                     last = i;
                     if(last-first >= 1) {
+                        firstNode = false;
                         pe = new ParentheticalExpression(str.substring(first + 1, last), e);
-                        pe.addSubexpression(parseHelper(str.substring(first + 1, last), "[^a-z0-9* ()]+(?![^\\(]*\\))", 0, e, this::parseA));
+                        Expression c = parseHelper(str.substring(first + 1, last), "[^a-z0-9* ()]+(?![^\\(]*\\))", 0, e, this::parseM);
+                        if(c == null)
+                            return null;
+                        pe.addSubexpression(c);
                         return pe;
                     }
                 }
@@ -102,7 +116,10 @@ public class SimpleExpressionParser implements ExpressionParser {
     }
 
     Expression parseL(String str, CompoundExpression e){
+        if(str.length() == 0)
+            return null;
         System.out.println("lit");
+        firstNode = false;
         return new LiteralExpression(str, e);
     }
 }
