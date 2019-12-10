@@ -1,3 +1,5 @@
+import javafx.scene.Node;
+
 public class ParentheticalExpression extends AbstractCompoundExpression {
 
     /**
@@ -33,5 +35,10 @@ public class ParentheticalExpression extends AbstractCompoundExpression {
             throw new RuntimeException("ParentheticalExpression has a child already.");
         }
 
+    }
+
+    @Override
+    public Node getNode() {
+        return null;
     }
 }

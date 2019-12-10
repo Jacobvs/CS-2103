@@ -1,3 +1,5 @@
+import javafx.scene.Node;
+
 public class LiteralExpression implements Expression {
 
     private CompoundExpression parent;
@@ -54,6 +56,11 @@ public class LiteralExpression implements Expression {
     @Override
     public Expression deepCopy() {
         return new LiteralExpression(val);
+    }
+
+    @Override
+    public Node getNode() {
+        return null;
     }
 
     /**

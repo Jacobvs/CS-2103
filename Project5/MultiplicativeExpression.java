@@ -1,3 +1,5 @@
+import javafx.scene.Node;
+
 import java.util.ArrayList;
 
 public class MultiplicativeExpression extends AbstractCompoundExpression {
@@ -18,5 +20,10 @@ public class MultiplicativeExpression extends AbstractCompoundExpression {
      */
     public MultiplicativeExpression(String val){
         this(val, null);
+    }
+
+    @Override
+    public Node getNode() {
+        return null;
     }
 }
