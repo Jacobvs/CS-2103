@@ -1,10 +1,7 @@
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-import java.util.*;
 import java.io.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Code to test Project 5; you should definitely add more tests!
@@ -59,6 +56,16 @@ public class ExpressionParserPartialTester {
 		assertEquals(parseTreeStr, _parser.parse(expressionStr, false).convertToString(0));
 	}
 
+    @Test
+    /**
+     * Verifies that a specific expression is parsed into the correct parse tree.
+     */
+    public void testExpression4 () throws ExpressionParseException {
+        final String expressionStr = "4";
+        final String parseTreeStr = "4\n";
+        assertEquals(parseTreeStr, _parser.parse(expressionStr, false).convertToString(0));
+    }
+
 	@Test
 	/**
 	 * Verifies that a specific expression is parsed into the correct parse tree.
@@ -106,4 +113,21 @@ public class ExpressionParserPartialTester {
 		final String expressionStr = "()()";
 		_parser.parse(expressionStr, false);
 	}
+    @Test(expected = ExpressionParseException.class)
+    /**
+     * Verifies that a specific expression is parsed into the correct parse tree.
+     */
+    public void testException4 () throws ExpressionParseException {
+        final String expressionStr = "";
+        _parser.parse(expressionStr, false);
+    }
+
+    @Test(expected = ExpressionParseException.class)
+    /**
+     * Verifies that a specific expression is parsed into the correct parse tree.
+     */
+    public void testException5 () throws ExpressionParseException {
+        final String expressionStr = "+";
+        _parser.parse(expressionStr, false);
+    }
 }
