@@ -22,8 +22,4 @@ public class MultiplicativeExpression extends AbstractCompoundExpression {
         this(val, null);
     }
 
-    @Override
-    public Node getNode() {
-        return null;
-    }
 }

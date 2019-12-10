@@ -36,9 +36,4 @@ public class ParentheticalExpression extends AbstractCompoundExpression {
         }
 
     }
-
-    @Override
-    public Node getNode() {
-        return null;
-    }
 }

@@ -20,8 +20,4 @@ public class AdditiveExpression extends AbstractCompoundExpression {
         this(val, null);
     }
 
-    @Override
-    public Node getNode() {
-        return null;
-    }
 }

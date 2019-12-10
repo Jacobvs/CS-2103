@@ -1,3 +1,5 @@
+import javafx.scene.Node;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,6 +70,11 @@ public abstract class AbstractCompoundExpression implements CompoundExpression {
     @Override
     public void setParent(CompoundExpression parent) {
         this.parent = parent;
+    }
+
+    @Override
+    public Node getNode() {
+        return null;
     }
 
     /**
