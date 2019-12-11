@@ -1,4 +1,5 @@
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 
 public class ParentheticalExpression extends AbstractCompoundExpression {
 
@@ -7,8 +8,8 @@ public class ParentheticalExpression extends AbstractCompoundExpression {
      * @param val Value of expression, ex: (5+x)
      * @param parent Parent of expression
      */
-    public ParentheticalExpression(String val, CompoundExpression parent){
-        super(val, parent);
+    public ParentheticalExpression(String val, CompoundExpression parent, Label node){
+        super(val, parent, node);
         super.setOperator("()");
     }
 
@@ -16,8 +17,8 @@ public class ParentheticalExpression extends AbstractCompoundExpression {
      * Constructor with 1 argument
      * @param val Value of expression (see above)
      */
-    public ParentheticalExpression(String val) {
-        this(val, null);
+    public ParentheticalExpression(String val, Label node) {
+        this(val, null, node);
     }
 
     /**

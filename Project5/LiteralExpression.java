@@ -1,26 +1,29 @@
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 
 public class LiteralExpression implements Expression {
 
     private CompoundExpression parent;
     private String val;
+    private Label node;
 
     /**
      * Constructor for a literal expression
      * @param val Value of Literal expression -> [a-z], [0-9]+
      * @param parent Parent node of literal expression, must be compound
      */
-    public LiteralExpression(String val, CompoundExpression parent){
+    public LiteralExpression(String val, CompoundExpression parent, Label node){
         this.parent = parent;
         this.val = val;
+        this.node = node;
     }
 
     /**
      * Constructor for literal expression, parent is initially null and does not need a param
      * @param val Value of Literal expression -> [a-z], [0-9]+
      */
-    public LiteralExpression(String val){
-        this(val, null);
+    public LiteralExpression(String val, Label node){
+        this(val, null, node);
     }
 
     /**
@@ -55,12 +58,12 @@ public class LiteralExpression implements Expression {
      */
     @Override
     public Expression deepCopy() {
-        return new LiteralExpression(val);
+        return new LiteralExpression(val, new Label(val));
     }
 
     @Override
     public Node getNode() {
-        return null;
+        return node;
     }
 
     /**

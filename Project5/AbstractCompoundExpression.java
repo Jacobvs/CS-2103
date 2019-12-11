@@ -1,4 +1,5 @@
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,16 +9,18 @@ public abstract class AbstractCompoundExpression implements CompoundExpression {
     private CompoundExpression parent;
     private String operator;
     private String val;
+    private Label node;
 
     /**
      * Sets val to parameter, parent to parameter and initializes children as empty
      * @param val Value of the expression
      * @param parent Parent of the expression
      */
-    public AbstractCompoundExpression(String val, CompoundExpression parent){
+    public AbstractCompoundExpression(String val, CompoundExpression parent, Label node){
         this.val = val;
         this.children = new ArrayList<>();
         this.parent = parent;
+        this.node = node;
     }
 
     /**
@@ -74,7 +77,7 @@ public abstract class AbstractCompoundExpression implements CompoundExpression {
 
     @Override
     public Node getNode() {
-        return null;
+        return node;
     }
 
     /**
@@ -90,11 +93,11 @@ public abstract class AbstractCompoundExpression implements CompoundExpression {
                 e = c.deepCopy();
             else {
                 if (c instanceof AdditiveExpression)
-                    e = new AdditiveExpression(((AdditiveExpression) c).getVal());
+                    e = new AdditiveExpression(((AdditiveExpression) c).getVal(), new Label(((AdditiveExpression) c).getVal()));
                 else if (c instanceof MultiplicativeExpression)
-                    e = new MultiplicativeExpression(((MultiplicativeExpression) c).getVal());
+                    e = new MultiplicativeExpression(((MultiplicativeExpression) c).getVal(), new Label(((MultiplicativeExpression) c).getVal()));
                 else if (c instanceof ParentheticalExpression)
-                    e = new ParentheticalExpression(((ParentheticalExpression) c).getVal());
+                    e = new ParentheticalExpression(((ParentheticalExpression) c).getVal(), new Label(((ParentheticalExpression) c).getVal()));
                 ((AbstractCompoundExpression) e).addSubexpression(c.deepCopy());
             }
         }

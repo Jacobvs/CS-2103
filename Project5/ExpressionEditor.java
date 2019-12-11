@@ -26,13 +26,24 @@ public class ExpressionEditor extends Application {
 	 * Mouse event handler for the entire pane that constitutes the ExpressionEditor
 	 */
 	private static class MouseEventHandler implements EventHandler<MouseEvent> {
+		Pane pane;
+		CompoundExpression root;
 		MouseEventHandler (Pane pane_, CompoundExpression rootExpression_) {
+			this.pane = pane_;
+			this.root = rootExpression_;
 		}
 
 		public void handle (MouseEvent event) {
 			if (event.getEventType() == MouseEvent.MOUSE_PRESSED) {
+				System.out.println("PRESSED");
+				if(root.getNode().getBoundsInParent().intersects(event.getX(), event.getY(), 1, 1)){
+					((Label) root.getNode()).setBorder(Expression.RED_BORDER);
+				}
 			} else if (event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
+				System.out.println("DRAGGED");
 			} else if (event.getEventType() == MouseEvent.MOUSE_RELEASED) {
+				System.out.println("RELEASED");
+				((Label) root.getNode()).setBorder(Expression.NO_BORDER);
 			}
 		}
 	}
@@ -65,30 +76,32 @@ public class ExpressionEditor extends Application {
 		final Pane expressionPane = new Pane();
 
 		// Add the callback to handle when the Parse button is pressed	
-		button.setOnMouseClicked(new EventHandler<MouseEvent>() {
-			public void handle (MouseEvent e) {
-				// Try to parse the expression
-				try {
-					// Success! Add the expression's Node to the expressionPane
-					final Expression expression = expressionParser.parse(textField.getText(), true);
-					System.out.println(expression.convertToString(0));
-					expressionPane.getChildren().clear();
+		button.setOnMouseClicked(e -> {
+			// Try to parse the expression
+			try {
+				// Success! Add the expression's Node to the expressionPane
+				final Expression expression = expressionParser.parse(textField.getText(), true);
+				System.out.println(expression.convertToString(0));
+				expressionPane.getChildren().clear();
+
+				// If the parsed expression is a CompoundExpression, then register some callbacks
+				if (expression instanceof CompoundExpression) {
+					((Label) expression.getNode()).setBorder(Expression.NO_BORDER);
+					final MouseEventHandler eventHandler = new MouseEventHandler(expressionPane, (CompoundExpression) expression);
+					expressionPane.setOnMousePressed(eventHandler);
+					expressionPane.setOnMouseDragged(eventHandler);
+					expressionPane.setOnMouseReleased(eventHandler);
+					//TODO: ADD 2nd LEVEL EXPRESSIONS
+				}
+				else{
 					expressionPane.getChildren().add(expression.getNode());
 					expression.getNode().setLayoutX(WINDOW_WIDTH/4);
 					expression.getNode().setLayoutY(WINDOW_HEIGHT/2);
-
-					// If the parsed expression is a CompoundExpression, then register some callbacks
-					if (expression instanceof CompoundExpression) {
-						((Pane) expression.getNode()).setBorder(Expression.NO_BORDER);
-						final MouseEventHandler eventHandler = new MouseEventHandler(expressionPane, (CompoundExpression) expression);
-						expressionPane.setOnMousePressed(eventHandler);
-						expressionPane.setOnMouseDragged(eventHandler);
-						expressionPane.setOnMouseReleased(eventHandler);
-					}
-				} catch (ExpressionParseException epe) {
-					// If we can't parse the expression, then mark it in red
-					textField.setStyle("-fx-text-fill: red");
+					//TODO format text nicely
 				}
+			} catch (ExpressionParseException epe) {
+				// If we can't parse the expression, then mark it in red
+				textField.setStyle("-fx-text-fill: red");
 			}
 		});
 		queryPane.getChildren().add(button);
