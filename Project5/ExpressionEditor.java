@@ -75,6 +75,10 @@ public class ExpressionEditor extends Application {
 				}
 			} else if (event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
 				System.out.println("DRAGGED");
+				((Label) focus.getNode()).setTextFill(Expression.GHOST_COLOR);
+				focus = focus.deepCopy();
+				focus.getNode().setLayoutX(event.getSceneX());
+				focus.getNode().setLayoutY(event.getSceneY());
 			} else if (event.getEventType() == MouseEvent.MOUSE_RELEASED) {
 				System.out.println("RELEASED");
 				((Label) root.getNode()).setBorder(Expression.NO_BORDER);
