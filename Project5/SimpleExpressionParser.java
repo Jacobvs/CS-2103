@@ -36,6 +36,7 @@ public class SimpleExpressionParser implements ExpressionParser {
             throw new ExpressionParseException("Cannot parse expression: " + str);
         }
 
+        //TODO implement javaFXControls Boolean
         // Flatten the expression before returning
         expression.flatten();
         return expression;
@@ -70,8 +71,7 @@ public class SimpleExpressionParser implements ExpressionParser {
 
         if (matcher.find() && type != 2){ // if the regex finds a match, continue, If the type is a literal, skip parsing
 
-            Label l = new Label(str);
-            e = (type == 0) ? new AdditiveExpression(str, prev, l) : new MultiplicativeExpression(str, prev, l); // Setup CompoundExpression node for defined type
+            e = (type == 0) ? new AdditiveExpression(str, prev) : new MultiplicativeExpression(str, prev); // Setup CompoundExpression node for defined type
             String[] arr = str.split(regex); // Split by regex matches on operator
 
             if(arr.length == 0) // If both sides of equation are empty, raise error
@@ -136,7 +136,7 @@ public class SimpleExpressionParser implements ExpressionParser {
                     last = i;
                     if(last-first >= 1) { // ensure there's something between the parentheses
                         firstNode = false;
-                        pe = new ParentheticalExpression(str, e, new Label(str)); // Create new expression
+                        pe = new ParentheticalExpression(str, e); // Create new expression
                         str = str.substring(first+1, last); // trim parenthesis off
 
                         if(str.length() > 0 && (str.charAt(str.length()-1) == '+' || str.charAt(str.length()-1) == '*'
@@ -165,6 +165,6 @@ public class SimpleExpressionParser implements ExpressionParser {
         if(str.length() == 0 || str.indexOf('(') != -1 || str.indexOf(')') != -1)
             return null;
         firstNode = false;
-        return new LiteralExpression(str, e, new Label(str)); // Create and return literal expression with str as value
+        return new LiteralExpression(str, e); // Create and return literal expression with str as value
     }
 }

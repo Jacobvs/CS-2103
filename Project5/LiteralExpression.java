@@ -1,5 +1,6 @@
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.text.Font;
 
 public class LiteralExpression implements Expression {
 
@@ -12,18 +13,19 @@ public class LiteralExpression implements Expression {
      * @param val Value of Literal expression -> [a-z], [0-9]+
      * @param parent Parent node of literal expression, must be compound
      */
-    public LiteralExpression(String val, CompoundExpression parent, Label node){
+    public LiteralExpression(String val, CompoundExpression parent){
         this.parent = parent;
         this.val = val;
-        this.node = node;
+        this.node = new Label(val);
+        this.node.setFont(Font.font(ExpressionEditor.FONT, ExpressionEditor.FONT_SIZE));
     }
 
     /**
      * Constructor for literal expression, parent is initially null and does not need a param
      * @param val Value of Literal expression -> [a-z], [0-9]+
      */
-    public LiteralExpression(String val, Label node){
-        this(val, null, node);
+    public LiteralExpression(String val){
+        this(val, null);
     }
 
     /**
@@ -58,7 +60,7 @@ public class LiteralExpression implements Expression {
      */
     @Override
     public Expression deepCopy() {
-        return new LiteralExpression(val, new Label(val));
+        return new LiteralExpression(val);
     }
 
     @Override

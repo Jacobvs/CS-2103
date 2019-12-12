@@ -8,8 +8,8 @@ public class AdditiveExpression extends AbstractCompoundExpression {
      * @param val Value of expression, example: x+4
      * @param parent Parent node of expression, must be compound
      */
-    public AdditiveExpression(String val, CompoundExpression parent, Label node){
-        super(val, parent, node);
+    public AdditiveExpression(String val, CompoundExpression parent){
+        super(val, parent);
         super.setOperator("+");
     }
 
@@ -17,8 +17,8 @@ public class AdditiveExpression extends AbstractCompoundExpression {
      * 1 Args constructor for additive expression, parent is initially null and does not need a param
      * @param val Value of expression (see above)
      */
-    public AdditiveExpression(String val, Label node) {
-        this(val, null, node);
+    public AdditiveExpression(String val) {
+        this(val, null);
     }
 
 }

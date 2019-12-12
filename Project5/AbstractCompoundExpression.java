@@ -1,5 +1,6 @@
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.text.Font;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,11 +17,12 @@ public abstract class AbstractCompoundExpression implements CompoundExpression {
      * @param val Value of the expression
      * @param parent Parent of the expression
      */
-    public AbstractCompoundExpression(String val, CompoundExpression parent, Label node){
+    public AbstractCompoundExpression(String val, CompoundExpression parent){
         this.val = val;
         this.children = new ArrayList<>();
         this.parent = parent;
-        this.node = node;
+        this.node = new Label(val);
+        this.node.setFont(Font.font(ExpressionEditor.FONT, ExpressionEditor.FONT_SIZE));
     }
 
     /**
@@ -55,6 +57,10 @@ public abstract class AbstractCompoundExpression implements CompoundExpression {
      */
     public void setOperator(String operator) {
         this.operator = operator;
+    }
+
+    public String getOperator(){
+        return this.operator;
     }
 
     /**
@@ -93,11 +99,11 @@ public abstract class AbstractCompoundExpression implements CompoundExpression {
                 e = c.deepCopy();
             else {
                 if (c instanceof AdditiveExpression)
-                    e = new AdditiveExpression(((AdditiveExpression) c).getVal(), new Label(((AdditiveExpression) c).getVal()));
+                    e = new AdditiveExpression(((AdditiveExpression) c).getVal());
                 else if (c instanceof MultiplicativeExpression)
-                    e = new MultiplicativeExpression(((MultiplicativeExpression) c).getVal(), new Label(((MultiplicativeExpression) c).getVal()));
+                    e = new MultiplicativeExpression(((MultiplicativeExpression) c).getVal());
                 else if (c instanceof ParentheticalExpression)
-                    e = new ParentheticalExpression(((ParentheticalExpression) c).getVal(), new Label(((ParentheticalExpression) c).getVal()));
+                    e = new ParentheticalExpression(((ParentheticalExpression) c).getVal());
                 ((AbstractCompoundExpression) e).addSubexpression(c.deepCopy());
             }
         }
