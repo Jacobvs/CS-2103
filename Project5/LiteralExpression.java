@@ -1,7 +1,5 @@
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
-import javafx.scene.text.Font;
 
 public class LiteralExpression implements Expression {
 
@@ -19,7 +17,10 @@ public class LiteralExpression implements Expression {
         Label l = new Label(val);
         l.setFont(ExpressionEditor.FONT);
         this.node = l;
-        setParent(parent);
+        if(parent != null)
+            setParent(parent);
+        else
+            this.parent = null;
     }
 
     /**

@@ -1,7 +1,6 @@
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
-import javafx.scene.text.Font;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -119,19 +118,16 @@ public abstract class AbstractCompoundExpression implements CompoundExpression {
      */
     @Override
     public Expression deepCopy(CompoundExpression parent) {
-        Expression e = null;
+        AbstractCompoundExpression e;
+        if(this instanceof AdditiveExpression)
+            e = new AdditiveExpression(val);
+        else if (this instanceof MultiplicativeExpression)
+            e = new MultiplicativeExpression(val);
+        else
+            e = new ParentheticalExpression(val);
+        // make copy of current node
         for(Expression c : children){
-            if(c instanceof  LiteralExpression)
-                e = c.deepCopy(parent);
-            else {
-                if (c instanceof AdditiveExpression)
-                    e = new AdditiveExpression(c.getVal(), parent);
-                else if (c instanceof MultiplicativeExpression)
-                    e = new MultiplicativeExpression(c.getVal(), parent);
-                else if (c instanceof ParentheticalExpression)
-                    e = new ParentheticalExpression(c.getVal(), parent);
-                ((AbstractCompoundExpression) e).addSubexpression(c.deepCopy((CompoundExpression) e));
-            }
+            e.addSubexpression(c.deepCopy(e));
         }
         return e;
     }
