@@ -144,7 +144,7 @@ public class SimpleExpressionParser implements ExpressionParser {
                            || str.charAt(0) == '+' || str.charAt(0) == '*')) // ensure string doesn't have unbalanced operators
                             return null;
 
-                        Expression c = parseHelper(str, "[^a-z0-9* ()]+(?![^\\(]*\\))", 0, e, this::parseM); // Save result of recursing inner string starting back at addition
+                        Expression c = parseHelper(str, "[^a-z0-9* ()]+(?![^\\(]*\\))", 0, pe, this::parseM); // Save result of recursing inner string starting back at addition
                         if(c == null) // If c is null cascade null (error) up recursion
                             return null;
                         pe.addSubexpression(c); // add result to node's children

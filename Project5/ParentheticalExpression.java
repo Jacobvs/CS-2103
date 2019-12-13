@@ -29,7 +29,6 @@ public class ParentheticalExpression extends AbstractCompoundExpression {
     public void addSubexpression(Expression subexpression) {
         // Throw error if user tries to add more than one child to parenthetical
         if(super.getSubexpressions().size() == 0) {
-            subexpression.setParent(this);
             super.addSubexpression(subexpression);
         }
         else{

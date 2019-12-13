@@ -21,8 +21,12 @@ public abstract class AbstractCompoundExpression implements CompoundExpression {
     public AbstractCompoundExpression(String val, CompoundExpression parent){
         this.val = val;
         this.children = new ArrayList<>();
-        this.parent = parent;
         this.node = new HBox();
+        this.node.setId(val);
+        if(parent != null)
+            setParent(parent);
+        else
+            this.parent = null;
     }
 
     /**
@@ -31,9 +35,7 @@ public abstract class AbstractCompoundExpression implements CompoundExpression {
      */
     @Override
     public void addSubexpression(Expression subexpression) {
-        subexpression.setParent(this);
         this.children.add(subexpression);
-        updateHbox();
     }
 
     /**
@@ -80,6 +82,7 @@ public abstract class AbstractCompoundExpression implements CompoundExpression {
     @Override
     public void setParent(CompoundExpression parent) {
         this.parent = parent;
+        ((AbstractCompoundExpression) this.parent).updateHbox(node);
     }
 
     @Override
@@ -87,26 +90,33 @@ public abstract class AbstractCompoundExpression implements CompoundExpression {
         return node;
     }
 
-    public void updateHbox(){
-        if(children.size() > 1) {
+    public void updateHbox(Node n){
+        if(node.getChildren().size() >= 1){
             Label o = new Label(operator);
             o.setFont(ExpressionEditor.FONT);
             this.node.getChildren().add(o);
         }
-//        if(children.get(children.size()-1) instanceof ParentheticalExpression){
-//            Label p1 = new Label("(");
-//            p1.setFont(ExpressionEditor.FONT);
-//            this.node.getChildren().add(p1);
+//        if(children.size() > 1) {
+//            Label o = new Label(operator);
+//            o.setFont(ExpressionEditor.FONT);
+//            this.node.getChildren().add(o);
 //        }
-        Label l = new Label(children.get(children.size() - 1).getVal());
-        l.setFont(ExpressionEditor.FONT);
-        this.node.getChildren().add(l);
+        if(this instanceof ParentheticalExpression){
+            Label p1 = new Label("(");
+            p1.setFont(ExpressionEditor.FONT);
+            this.node.getChildren().add(p1);
+        }
 
-//        if(children.get(children.size()-1) instanceof ParentheticalExpression){
-//            Label p2 = new Label(")");
-//            p2.setFont(ExpressionEditor.FONT);
-//            this.node.getChildren().add(p2);
-//        }
+        node.getChildren().add(n);
+//        Label l = new Label(children.get(children.size() - 1).getVal());
+//        l.setFont(ExpressionEditor.FONT);
+//        this.node.getChildren().add(l);
+//
+        if(this instanceof ParentheticalExpression){
+            Label p2 = new Label(")");
+            p2.setFont(ExpressionEditor.FONT);
+            this.node.getChildren().add(p2);
+        }
     }
 
     /**

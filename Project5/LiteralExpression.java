@@ -7,7 +7,7 @@ public class LiteralExpression implements Expression {
 
     private CompoundExpression parent;
     private String val;
-    private HBox node;
+    private Label node;
 
     /**
      * Constructor for a literal expression
@@ -15,10 +15,11 @@ public class LiteralExpression implements Expression {
      * @param parent Parent node of literal expression, must be compound
      */
     public LiteralExpression(String val, CompoundExpression parent){
-        this.parent = parent;
         this.val = val;
-        this.node = new HBox(new Label(val));
-        ((Label) this.node.getChildren().get(0)).setFont(ExpressionEditor.FONT);
+        Label l = new Label(val);
+        l.setFont(ExpressionEditor.FONT);
+        this.node = l;
+        setParent(parent);
     }
 
     /**
@@ -53,6 +54,7 @@ public class LiteralExpression implements Expression {
     @Override
     public void setParent(CompoundExpression parent) {
         this.parent = parent;
+        ((AbstractCompoundExpression) this.parent).updateHbox(node);
     }
 
     /**

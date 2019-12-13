@@ -13,6 +13,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
@@ -21,7 +22,6 @@ import javafx.stage.Stage;
 
 public class ExpressionEditor extends Application {
 	public static void main (String[] args) {
-		System.out.println(Toolkit.getToolkit().getFontLoader().getFontNames());
 		launch(args);
 	}
 
@@ -30,52 +30,51 @@ public class ExpressionEditor extends Application {
 	 */
 	private class MouseEventHandler implements EventHandler<MouseEvent> {
 		Pane pane;
-		AbstractCompoundExpression root;
+		Expression root;
 		Expression focus;
 		Node focusN;
 		MouseEventHandler (Pane pane_, CompoundExpression rootExpression_) {
 			this.pane = pane_;
-			this.root = (AbstractCompoundExpression) rootExpression_;
+			this.root = rootExpression_;
 			this.focus = root;
-			this.focusN = ((HBox) root.getNode()).getChildren().get(0);
+			this.focusN = root.getNode();
 		}
 
 		public void handle (MouseEvent event) {
 			if (event.getEventType() == MouseEvent.MOUSE_PRESSED) {
 				System.out.println("PRESSED");
-				ObservableList<Node> children = ((HBox) root.getNode()).getChildren();
-				for (int i = 0; i < children.size(); i++) {
-					Node n = children.get(i);
-					if (n.contains(n.sceneToLocal(event.getSceneX(), event.getSceneY()))) {
-						String val = ((Label) n).getText();
-						if (!val.equals("*") && !val.equals("+")) {
-							((Label) focusN).setBorder(Expression.NO_BORDER);
-							((Label) n).setBorder(Expression.RED_BORDER);
+				if(focusN instanceof HBox) {
+					ObservableList<Node> children = ((HBox) focus.getNode()).getChildren();
+					for (int i = 0; i < children.size(); i++) {
+						Node n = children.get(i);
+						if (n.contains(n.sceneToLocal(event.getSceneX(), event.getSceneY()))) {
+							if (n instanceof Label) {
+								String val = ((Label) n).getText();
+								if (val.equals("*") || val.equals("+") || val.equals("(") || val.equals(")"))
+									continue;
+							}
+							((Region) focusN).setBorder(Expression.NO_BORDER);
+							((Region) n).setBorder(Expression.RED_BORDER);
 							focusN = n;
 							//update focus
-
-							//save first and second half
-//							if(focus instanceof AbstractCompoundExpression){
-//								AbstractCompoundExpression ae = (AbstractCompoundExpression) focus;
-//								for(Expression e : ae.getSubexpressions()) {
-//									if (e.getVal().equals(((Label) focusN).getText()))
-//										focus = e;
-//								}
-//								int index = children.indexOf(n);
-//								((HBox) root.getNode()).getChildren().remove(index);
-//								((HBox) root.getNode()).getChildren().addAll(index, ((HBox) focus.getNode()).getChildren());
-//							}
-
-
+							if (focus instanceof AbstractCompoundExpression) {
+								AbstractCompoundExpression ae = (AbstractCompoundExpression) focus;
+								for (Expression e : ae.getSubexpressions()) {
+									if (e.getNode().equals(n))
+										focus = e;
+								}
+							}
+							return;
 						}
 					}
 				}
+				this.focus = root;
+				((Region) focusN).setBorder(Expression.NO_BORDER);
+				this.focusN = root.getNode();
+
 			} else if (event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
 				System.out.println("DRAGGED");
-//				((Label) focus.getNode()).setTextFill(Expression.GHOST_COLOR);
-//				focus = focus.deepCopy();
-//				focus.getNode().setLayoutX(event.getSceneX());
-//				focus.getNode().setLayoutY(event.getSceneY());
+
 			} else if (event.getEventType() == MouseEvent.MOUSE_RELEASED) {
 				System.out.println("RELEASED");
 				//((Label) root.getNode()).setBorder(Expression.NO_BORDER);
