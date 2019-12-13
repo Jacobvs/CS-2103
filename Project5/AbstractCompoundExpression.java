@@ -96,11 +96,7 @@ public abstract class AbstractCompoundExpression implements CompoundExpression {
             o.setFont(ExpressionEditor.FONT);
             this.node.getChildren().add(o);
         }
-//        if(children.size() > 1) {
-//            Label o = new Label(operator);
-//            o.setFont(ExpressionEditor.FONT);
-//            this.node.getChildren().add(o);
-//        }
+
         if(this instanceof ParentheticalExpression){
             Label p1 = new Label("(");
             p1.setFont(ExpressionEditor.FONT);
@@ -108,10 +104,7 @@ public abstract class AbstractCompoundExpression implements CompoundExpression {
         }
 
         node.getChildren().add(n);
-//        Label l = new Label(children.get(children.size() - 1).getVal());
-//        l.setFont(ExpressionEditor.FONT);
-//        this.node.getChildren().add(l);
-//
+
         if(this instanceof ParentheticalExpression){
             Label p2 = new Label(")");
             p2.setFont(ExpressionEditor.FONT);
@@ -132,11 +125,11 @@ public abstract class AbstractCompoundExpression implements CompoundExpression {
                 e = c.deepCopy();
             else {
                 if (c instanceof AdditiveExpression)
-                    e = new AdditiveExpression(((AdditiveExpression) c).getVal());
+                    e = new AdditiveExpression(c.getVal());
                 else if (c instanceof MultiplicativeExpression)
-                    e = new MultiplicativeExpression(((MultiplicativeExpression) c).getVal());
+                    e = new MultiplicativeExpression(c.getVal());
                 else if (c instanceof ParentheticalExpression)
-                    e = new ParentheticalExpression(((ParentheticalExpression) c).getVal());
+                    e = new ParentheticalExpression(c.getVal());
                 ((AbstractCompoundExpression) e).addSubexpression(c.deepCopy());
             }
         }
