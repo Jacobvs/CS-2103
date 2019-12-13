@@ -1,12 +1,13 @@
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 
 public class LiteralExpression implements Expression {
 
     private CompoundExpression parent;
     private String val;
-    private Label node;
+    private HBox node;
 
     /**
      * Constructor for a literal expression
@@ -16,8 +17,8 @@ public class LiteralExpression implements Expression {
     public LiteralExpression(String val, CompoundExpression parent){
         this.parent = parent;
         this.val = val;
-        this.node = new Label(val);
-        this.node.setFont(Font.font(ExpressionEditor.FONT, ExpressionEditor.FONT_SIZE));
+        this.node = new HBox(new Label(val));
+        ((Label) this.node.getChildren().get(0)).setFont(ExpressionEditor.FONT);
     }
 
     /**

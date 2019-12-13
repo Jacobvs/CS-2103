@@ -1,5 +1,9 @@
 import com.sun.javafx.tk.Toolkit;
 import javafx.application.Application;
+import javafx.collections.ObservableList;
+import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -28,60 +32,53 @@ public class ExpressionEditor extends Application {
 		Pane pane;
 		AbstractCompoundExpression root;
 		Expression focus;
+		Node focusN;
 		MouseEventHandler (Pane pane_, CompoundExpression rootExpression_) {
 			this.pane = pane_;
 			this.root = (AbstractCompoundExpression) rootExpression_;
 			this.focus = root;
+			this.focusN = ((HBox) root.getNode()).getChildren().get(0);
 		}
 
 		public void handle (MouseEvent event) {
 			if (event.getEventType() == MouseEvent.MOUSE_PRESSED) {
 				System.out.println("PRESSED");
-				if(focus instanceof AbstractCompoundExpression){
-					if(!((AbstractCompoundExpression) focus).getSubexpressions().stream()
-							.anyMatch(e -> {
-								if(e.getNode().getBoundsInParent().intersects(event.getX(), event.getY(), 1, 1)){
-									System.out.println(((Label) e.getNode()).getText());
-									((Label) focus.getNode()).setBorder(Expression.NO_BORDER);
-									focus = e;
-									if(focus instanceof ParentheticalExpression) {
-										System.out.println("PAREN");
-										focus = ((ParentheticalExpression) focus).getSubexpressions().get(0);
-										System.out.println(((Label) focus.getNode()).getText());
-									}
-									((Label) focus.getNode()).setBorder(Expression.RED_BORDER);
-									return true;
-								}
-								return false;
-							})){
-						((Label) focus.getNode()).setBorder(Expression.NO_BORDER);
-						focus = root;
-					}
-				}
-				else{
-					for(Expression e : root.getSubexpressions()){
-						if(e.getNode().getBoundsInParent().intersects(event.getX(), event.getY(), 1, 1)){
-							System.out.println(((Label) e.getNode()).getText());
-							((Label) focus.getNode()).setBorder(Expression.NO_BORDER);
-							((Label) e.getNode()).setBorder(Expression.RED_BORDER);
-							focus = e;
-							if(!(e instanceof LiteralExpression)) {
-								((Label) focus.getNode()).setBorder(Expression.NO_BORDER);
-								focus = root;
-							}
-							break;
+				ObservableList<Node> children = ((HBox) root.getNode()).getChildren();
+				for (int i = 0; i < children.size(); i++) {
+					Node n = children.get(i);
+					if (n.contains(n.sceneToLocal(event.getSceneX(), event.getSceneY()))) {
+						String val = ((Label) n).getText();
+						if (!val.equals("*") && !val.equals("+")) {
+							((Label) focusN).setBorder(Expression.NO_BORDER);
+							((Label) n).setBorder(Expression.RED_BORDER);
+							focusN = n;
+							//update focus
+
+							//save first and second half
+//							if(focus instanceof AbstractCompoundExpression){
+//								AbstractCompoundExpression ae = (AbstractCompoundExpression) focus;
+//								for(Expression e : ae.getSubexpressions()) {
+//									if (e.getVal().equals(((Label) focusN).getText()))
+//										focus = e;
+//								}
+//								int index = children.indexOf(n);
+//								((HBox) root.getNode()).getChildren().remove(index);
+//								((HBox) root.getNode()).getChildren().addAll(index, ((HBox) focus.getNode()).getChildren());
+//							}
+
+
 						}
 					}
 				}
 			} else if (event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
 				System.out.println("DRAGGED");
-				((Label) focus.getNode()).setTextFill(Expression.GHOST_COLOR);
-				focus = focus.deepCopy();
-				focus.getNode().setLayoutX(event.getSceneX());
-				focus.getNode().setLayoutY(event.getSceneY());
+//				((Label) focus.getNode()).setTextFill(Expression.GHOST_COLOR);
+//				focus = focus.deepCopy();
+//				focus.getNode().setLayoutX(event.getSceneX());
+//				focus.getNode().setLayoutY(event.getSceneY());
 			} else if (event.getEventType() == MouseEvent.MOUSE_RELEASED) {
 				System.out.println("RELEASED");
-				((Label) root.getNode()).setBorder(Expression.NO_BORDER);
+				//((Label) root.getNode()).setBorder(Expression.NO_BORDER);
 			}
 		}
 	}
@@ -96,8 +93,7 @@ public class ExpressionEditor extends Application {
 	 */
 	private static final String EXAMPLE_EXPRESSION = "2*x+3*y+4*z+(7+6*z)";
 
-	public static final String FONT = "Menlo";
-	public static final int FONT_SIZE = 25;
+	public static final Font FONT = new Font("Menlo", 30);
 
 	/**
 	 * Parser used for parsing expressions.
@@ -127,20 +123,19 @@ public class ExpressionEditor extends Application {
 
 				// If the parsed expression is a CompoundExpression, then register some callbacks
 				if (expression instanceof CompoundExpression) {
-					((Label) expression.getNode()).setBorder(Expression.NO_BORDER);
+					//((Label) expression.getNode()).setBorder(Expression.NO_BORDER);
 					final MouseEventHandler eventHandler = new MouseEventHandler(expressionPane, (CompoundExpression) expression);
 					expressionPane.setOnMousePressed(eventHandler);
 					expressionPane.setOnMouseDragged(eventHandler);
 					expressionPane.setOnMouseReleased(eventHandler);
 					//TODO: ADD 2nd LEVEL EXPRESSIONS
-					placeNodes(expressionPane, expression, 0 , 0, false);
+					//placeNodes(expressionPane, expression, 0 , 0, false);
 				}
-				else{
-					expressionPane.getChildren().add(expression.getNode());
-					expression.getNode().setLayoutX(WINDOW_WIDTH/2);
-					expression.getNode().setLayoutY(WINDOW_HEIGHT/2 - getTextSize(((Label) expression.getNode()), true));
-					//TODO format text nicely
-				}
+				expressionPane.getChildren().add(expression.getNode());
+				expression.getNode().setLayoutX((WINDOW_WIDTH >> 1) - getTextSize(expression.getVal(),false)/2);
+				expression.getNode().setLayoutY((WINDOW_HEIGHT>>1) - getTextSize(expression.getVal(),true)/2);
+				//TODO format text nicely
+
 			} catch (ExpressionParseException epe) {
 				// If we can't parse the expression, then mark it in red
 				textField.setStyle("-fx-text-fill: red");
@@ -159,68 +154,68 @@ public class ExpressionEditor extends Application {
 		primaryStage.show();
 	}
 
-	//TODO place all nodes invisibly at start recursively
-	private void placeNodes(Pane pane, Expression root, double x, double y, boolean hidden){
-		boolean firstNode = true;
-		AbstractCompoundExpression ae = (AbstractCompoundExpression) root;
-		Paint clear = Paint.valueOf(Color.color(0,0,0,0).toString());
-		if (x == 0 && y == 0) {
-			x = (WINDOW_WIDTH >> 1) - getTextSize(((Label) root.getNode()), false)/2;
-			y = (WINDOW_HEIGHT >> 1) - getTextSize(((Label) root.getNode()), true);
-		}
-		if(root instanceof ParentheticalExpression){
-			Label p = new Label("(");
-			p.setFont(Font.font(FONT, FONT_SIZE));
-			x += getTextSize(p, false);
-		}
-		for(Expression ce : ae.getSubexpressions()){
-			if(firstNode){
-				pane.getChildren().add(ce.getNode());
-				ce.getNode().setLayoutY(y);
-				ce.getNode().setLayoutX(x);
-				if(hidden)
-					((Label) ce.getNode()).setTextFill(clear);
-				if(ce instanceof ParentheticalExpression)
-					ce = ae.getSubexpressions().get(0);
-				if(!(ce instanceof LiteralExpression))
-					placeNodes(pane, ce, ce.getNode().getLayoutX(), ce.getNode().getLayoutY(), true);
-				x += getTextSize((Label) ce.getNode(), false);
-				firstNode = false;
-			}
-			else{
-				Label o = new Label(ae.getOperator());
-				o.setFont(Font.font(FONT, FONT_SIZE));
-				pane.getChildren().add(o);
-				o.setLayoutY(y);
-				o.setLayoutX(x);
-				if(hidden)
-					o.setTextFill(clear);
-				x += getTextSize(o, false);
-
-				pane.getChildren().add(ce.getNode());
-				ce.getNode().setLayoutY(y);
-				ce.getNode().setLayoutX(x);
-				if(hidden)
-					((Label) ce.getNode()).setTextFill(clear);
-				if(!(ce instanceof LiteralExpression))
-					placeNodes(pane, ce, ce.getNode().getLayoutX(), ce.getNode().getLayoutY(), true);
-				x += getTextSize((Label) ce.getNode(), false);
-			}
-		}
-//		if(root instanceof ParentheticalExpression){
-//			Label p = new Label(")");
-//			p.setFont(Font.font(FONT, FONT_SIZE));
-//			pane.getChildren().add(p);
-//			p.setLayoutX(x);
-//			p.setLayoutY(y);
-//			if(hidden)
-//				p.setTextFill(clear);
+//	//TODO place all nodes invisibly at start recursively
+//	private void placeNodes(Pane pane, Expression root, double x, double y, boolean hidden){
+//		boolean firstNode = true;
+//		AbstractCompoundExpression ae = (AbstractCompoundExpression) root;
+//		Paint clear = Paint.valueOf(Color.color(0,0,0,0).toString());
+//		if (x == 0 && y == 0) {
+//			x = (WINDOW_WIDTH >> 1) - getTextSize(((Label) root.getNode()), false)/2;
+//			y = (WINDOW_HEIGHT >> 1) - getTextSize(((Label) root.getNode()), true);
 //		}
-	}
+//		if(root instanceof ParentheticalExpression){
+//			Label p = new Label("(");
+//			p.setFont(Font.font(FONT, FONT_SIZE));
+//			x += getTextSize(p, false);
+//		}
+//		for(Expression ce : ae.getSubexpressions()){
+//			if(firstNode){
+//				pane.getChildren().add(ce.getNode());
+//				ce.getNode().setLayoutY(y);
+//				ce.getNode().setLayoutX(x);
+//				if(hidden)
+//					((Label) ce.getNode()).setTextFill(clear);
+//				if(ce instanceof ParentheticalExpression)
+//					ce = ae.getSubexpressions().get(0);
+//				if(!(ce instanceof LiteralExpression))
+//					placeNodes(pane, ce, ce.getNode().getLayoutX(), ce.getNode().getLayoutY(), true);
+//				x += getTextSize((Label) ce.getNode(), false);
+//				firstNode = false;
+//			}
+//			else{
+//				Label o = new Label(ae.getOperator());
+//				o.setFont(Font.font(FONT, FONT_SIZE));
+//				pane.getChildren().add(o);
+//				o.setLayoutY(y);
+//				o.setLayoutX(x);
+//				if(hidden)
+//					o.setTextFill(clear);
+//				x += getTextSize(o, false);
+//
+//				pane.getChildren().add(ce.getNode());
+//				ce.getNode().setLayoutY(y);
+//				ce.getNode().setLayoutX(x);
+//				if(hidden)
+//					((Label) ce.getNode()).setTextFill(clear);
+//				if(!(ce instanceof LiteralExpression))
+//					placeNodes(pane, ce, ce.getNode().getLayoutX(), ce.getNode().getLayoutY(), true);
+//				x += getTextSize((Label) ce.getNode(), false);
+//			}
+//		}
+////		if(root instanceof ParentheticalExpression){
+////			Label p = new Label(")");
+////			p.setFont(Font.font(FONT, FONT_SIZE));
+////			pane.getChildren().add(p);
+////			p.setLayoutX(x);
+////			p.setLayoutY(y);
+////			if(hidden)
+////				p.setTextFill(clear);
+////		}
+//	}
 
-	private double getTextSize(Label l, boolean height){
-		Text txt = new Text(l.getText());
-		txt.setFont(l.getFont());
+	private double getTextSize(String s, boolean height){
+		Text txt = new Text(s);
+		txt.setFont(FONT);
 		return height ? txt.getBoundsInLocal().getHeight() : txt.getBoundsInLocal().getWidth();
 	}
 

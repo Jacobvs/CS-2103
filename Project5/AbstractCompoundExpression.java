@@ -1,5 +1,6 @@
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ public abstract class AbstractCompoundExpression implements CompoundExpression {
     private CompoundExpression parent;
     private String operator;
     private String val;
-    private Label node;
+    private HBox node;
 
     /**
      * Sets val to parameter, parent to parameter and initializes children as empty
@@ -21,8 +22,7 @@ public abstract class AbstractCompoundExpression implements CompoundExpression {
         this.val = val;
         this.children = new ArrayList<>();
         this.parent = parent;
-        this.node = new Label(val);
-        this.node.setFont(Font.font(ExpressionEditor.FONT, ExpressionEditor.FONT_SIZE));
+        this.node = new HBox();
     }
 
     /**
@@ -33,6 +33,7 @@ public abstract class AbstractCompoundExpression implements CompoundExpression {
     public void addSubexpression(Expression subexpression) {
         subexpression.setParent(this);
         this.children.add(subexpression);
+        updateHbox();
     }
 
     /**
@@ -84,6 +85,28 @@ public abstract class AbstractCompoundExpression implements CompoundExpression {
     @Override
     public Node getNode() {
         return node;
+    }
+
+    public void updateHbox(){
+        if(children.size() > 1) {
+            Label o = new Label(operator);
+            o.setFont(ExpressionEditor.FONT);
+            this.node.getChildren().add(o);
+        }
+//        if(children.get(children.size()-1) instanceof ParentheticalExpression){
+//            Label p1 = new Label("(");
+//            p1.setFont(ExpressionEditor.FONT);
+//            this.node.getChildren().add(p1);
+//        }
+        Label l = new Label(children.get(children.size() - 1).getVal());
+        l.setFont(ExpressionEditor.FONT);
+        this.node.getChildren().add(l);
+
+//        if(children.get(children.size()-1) instanceof ParentheticalExpression){
+//            Label p2 = new Label(")");
+//            p2.setFont(ExpressionEditor.FONT);
+//            this.node.getChildren().add(p2);
+//        }
     }
 
     /**

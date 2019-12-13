@@ -136,6 +136,7 @@ public class SimpleExpressionParser implements ExpressionParser {
                     last = i;
                     if(last-first >= 1) { // ensure there's something between the parentheses
                         firstNode = false;
+
                         pe = new ParentheticalExpression(str, e); // Create new expression
                         str = str.substring(first+1, last); // trim parenthesis off
 
