@@ -1,4 +1,5 @@
 import javafx.application.Application;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
@@ -27,7 +28,7 @@ public class ExpressionEditor extends Application {
 	/**
 	 * Mouse event handler for the entire pane that constitutes the ExpressionEditor
 	 */
-	private class MouseEventHandler implements EventHandler<MouseEvent> {
+	private static class MouseEventHandler implements EventHandler<MouseEvent> {
 		Pane pane;
 		Expression root, focus, focusCopy;
 		Node focusN;
@@ -43,6 +44,51 @@ public class ExpressionEditor extends Application {
 		public void handle (MouseEvent event) {
 			if (event.getEventType() == MouseEvent.MOUSE_PRESSED) {
 				System.out.println("PRESSED");
+
+			} else if (event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
+				//System.out.println("DRAGGED");
+				if(focus != root) {
+					if (focusCopy == null) {
+						focusN.setOpacity(Expression.GHOST_OPACITY);
+						focusCopy = focus.deepCopy(null);
+						pane.getChildren().add(focusCopy.getNode());
+					}
+					focusCopy.getNode().setLayoutX(event.getX());
+					focusCopy.getNode().setLayoutY(event.getY());
+
+					List<Expression> ln = ((AbstractCompoundExpression) focus.getParent()).getSubexpressions();
+					double closestVal = WINDOW_WIDTH;
+					int index = 0;
+					Node closestN = null;
+					for (int i = 0, lnSize = ln.size(); i < lnSize; i++) {
+						Expression e = ln.get(i);
+						Node n = e.getNode();
+						if(e instanceof ParentheticalExpression)
+							continue;
+						double xn = n.getBoundsInParent().getMinX();
+						double x = event.getX();
+						if (Math.abs(x - xn) < closestVal) {
+							closestVal = x - xn;
+							closestN = n;
+							index = i;
+						}
+					}
+					if(event.getX() > closestN.getBoundsInParent().getMinX() || event.getX() < closestN.getBoundsInParent().getMinX()){
+						ObservableList<Node> nl = ((HBox) focus.getParent().getNode()).getChildren();
+						List<Expression> el = ((AbstractCompoundExpression) focus.getParent()).getSubexpressions();
+						ObservableList<Node> nlc = FXCollections.observableArrayList(nl);
+						Collections.swap(nlc, index, nl.indexOf(focus.getNode()));
+						nl.setAll(nlc);
+					}
+				}
+
+			} else if (event.getEventType() == MouseEvent.MOUSE_RELEASED) {
+				System.out.println("RELEASED");
+				if(focusCopy != null){
+					pane.getChildren().remove(focusCopy.getNode());
+					focusCopy = null;
+					focusN.setOpacity(1);
+				}
 				if(focusN instanceof HBox) {
 					ObservableList<Node> children = ((HBox) focus.getNode()).getChildren();
 					for (int i = 0; i < children.size(); i++) {
@@ -71,53 +117,6 @@ public class ExpressionEditor extends Application {
 				this.focus = root;
 				((Region) focusN).setBorder(Expression.NO_BORDER);
 				this.focusN = root.getNode();
-
-			} else if (event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
-				//System.out.println("DRAGGED");
-				if(focus != root) {
-					focusN.setOpacity(0.6f);
-					if (focusCopy == null) {
-						focusCopy = focus.deepCopy(null);
-						pane.getChildren().add(focusCopy.getNode());
-					}
-					focusCopy.getNode().setLayoutX(event.getX());
-					focusCopy.getNode().setLayoutY(event.getY());
-					List<Node> ln = ((HBox) focus.getParent().getNode()).getChildren();
-					int focusIndex = ln.indexOf(focusN);
-					System.out.println("index: " + focusIndex);
-					for (int i = 0, lnSize = ln.size(); i < lnSize; i++) {
-						Node n = ln.get(i);
-						if (n instanceof Label) {
-							String val = ((Label) n).getText();
-							if (val.equals("*") || val.equals("+") || val.equals("(") || val.equals(")"))
-								continue;
-						}
-						//swap w/ node before or after
-						//System.out.println(event.getSceneX());
-
-						if (i == focusIndex-1 && event.getSceneX() < n.getBoundsInLocal().getMaxX()/2){
-							Point2D p = n.sceneToLocal(event.getSceneX(), event.getSceneY());
-							System.out.println(p.getX());
-							System.out.println(n.getBoundsInLocal().getMaxX()/2);
-							System.out.println("GREAT1");
-							Collections.swap(((HBox) focus.getParent().getNode()).getChildren(), i, focusIndex);
-						} else if (i == focusIndex+1 && event.getSceneX() > n.getBoundsInLocal().getMaxX()/2){
-							Point2D p = n.sceneToLocal(event.getSceneX(), event.getSceneY());
-							System.out.println(p.getX());
-							System.out.println(n.getBoundsInLocal().getMaxX()/2);
-							System.out.println("GREAT2");
-							Collections.swap(((HBox) focus.getParent().getNode()).getChildren(), i, focusIndex);
-						}
-					}
-				}
-
-			} else if (event.getEventType() == MouseEvent.MOUSE_RELEASED) {
-				System.out.println("RELEASED");
-				if(focusCopy != null){
-					pane.getChildren().remove(focusCopy.getNode());
-					focusCopy = null;
-					focusN.setOpacity(1);
-				}
 			}
 		}
 	}

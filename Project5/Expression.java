@@ -18,7 +18,7 @@ interface Expression {
 	/**
 	 * Color used for a "ghosted" expression
 	 */
-	public static final Color GHOST_COLOR = Color.LIGHTGREY;
+	public static final float GHOST_OPACITY = 0.6f;
 
 	/**
 	 * Returns the expression's parent.
@@ -36,6 +36,7 @@ interface Expression {
 	 * Creates and returns a deep copy of the expression.
 	 * The entire tree rooted at the target node is copied, i.e.,
 	 * the copied Expression is as deep as possible.
+	 * @param parent the parent node (new blank Additive node if root)
 	 * @return the deep copy
 	 */
 	Expression deepCopy (CompoundExpression parent);
@@ -47,6 +48,10 @@ interface Expression {
 	 */
 	Node getNode ();
 
+	/**
+	 * Returns the value associated with this expression.
+	 * @return the String containing the value of the expression.
+	 */
 	String getVal();
 
 	/**
@@ -75,7 +80,7 @@ interface Expression {
 	/**
 	 * Static helper method to indent a specified number of times from the left margin, by
 	 * appending tab characters to the specified StringBuilder.
-	 * @param sb the StringBuilder to which to append tab characters.
+	 * @param stringBuilder the StringBuilder to which to append tab characters.
 	 * @param indentLevel the number of tabs to append.
 	 */
 	public static void indent (StringBuilder stringBuilder, int indentLevel) {
