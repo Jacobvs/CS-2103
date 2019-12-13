@@ -38,7 +38,7 @@ interface Expression {
 	 * the copied Expression is as deep as possible.
 	 * @return the deep copy
 	 */
-	Expression deepCopy ();
+	Expression deepCopy (CompoundExpression parent);
 
 
 	/**

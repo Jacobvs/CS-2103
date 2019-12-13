@@ -25,14 +25,14 @@ public class ExpressionEditor extends Application {
 	 */
 	private class MouseEventHandler implements EventHandler<MouseEvent> {
 		Pane pane;
-		Expression root;
-		Expression focus;
+		Expression root, focus, focusCopy;
 		Node focusN;
 		MouseEventHandler (Pane pane_, CompoundExpression rootExpression_) {
 			this.pane = pane_;
 			this.root = rootExpression_;
 			this.focus = root;
 			this.focusN = root.getNode();
+			this.focusCopy = null;
 		}
 
 		public void handle (MouseEvent event) {
@@ -69,9 +69,23 @@ public class ExpressionEditor extends Application {
 
 			} else if (event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
 				System.out.println("DRAGGED");
+				if(focus != root) {
+					focusN.setOpacity(0.6f);
+					if (focusCopy == null) {
+						focusCopy = focus.deepCopy(new AdditiveExpression(""));
+						pane.getChildren().add(focusCopy.getNode());
+					}
+					focusCopy.getNode().setLayoutX(event.getX());
+					focusCopy.getNode().setLayoutY(event.getY());
+				}
 
 			} else if (event.getEventType() == MouseEvent.MOUSE_RELEASED) {
 				System.out.println("RELEASED");
+				if(focusCopy != null){
+					pane.getChildren().remove(focusCopy.getNode());
+					focusCopy = null;
+					focusN.setOpacity(1);
+				}
 			}
 		}
 	}

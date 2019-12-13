@@ -62,8 +62,8 @@ public class LiteralExpression implements Expression {
      * @return Literal expression with same value
      */
     @Override
-    public Expression deepCopy() {
-        return new LiteralExpression(val);
+    public Expression deepCopy(CompoundExpression parent) {
+        return new LiteralExpression(val, parent);
     }
 
     @Override
