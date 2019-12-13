@@ -1,19 +1,23 @@
 import javafx.application.Application;
 import javafx.collections.ObservableList;
-import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.event.EventHandler;
+import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+
+import java.util.Collections;
+import java.util.List;
 
 public class ExpressionEditor extends Application {
 	public static void main (String[] args) {
@@ -71,7 +75,6 @@ public class ExpressionEditor extends Application {
 			} else if (event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
 				//System.out.println("DRAGGED");
 				if(focus != root) {
-					System.out.println(focus.getVal());
 					focusN.setOpacity(0.6f);
 					if (focusCopy == null) {
 						focusCopy = focus.deepCopy(null);
@@ -79,7 +82,33 @@ public class ExpressionEditor extends Application {
 					}
 					focusCopy.getNode().setLayoutX(event.getX());
 					focusCopy.getNode().setLayoutY(event.getY());
-					System.out.println(focusCopy.getVal());
+					List<Node> ln = ((HBox) focus.getParent().getNode()).getChildren();
+					int focusIndex = ln.indexOf(focusN);
+					System.out.println("index: " + focusIndex);
+					for (int i = 0, lnSize = ln.size(); i < lnSize; i++) {
+						Node n = ln.get(i);
+						if (n instanceof Label) {
+							String val = ((Label) n).getText();
+							if (val.equals("*") || val.equals("+") || val.equals("(") || val.equals(")"))
+								continue;
+						}
+						//swap w/ node before or after
+						//System.out.println(event.getSceneX());
+
+						if (i == focusIndex-1 && event.getSceneX() < n.getBoundsInLocal().getMaxX()/2){
+							Point2D p = n.sceneToLocal(event.getSceneX(), event.getSceneY());
+							System.out.println(p.getX());
+							System.out.println(n.getBoundsInLocal().getMaxX()/2);
+							System.out.println("GREAT1");
+							Collections.swap(((HBox) focus.getParent().getNode()).getChildren(), i, focusIndex);
+						} else if (i == focusIndex+1 && event.getSceneX() > n.getBoundsInLocal().getMaxX()/2){
+							Point2D p = n.sceneToLocal(event.getSceneX(), event.getSceneY());
+							System.out.println(p.getX());
+							System.out.println(n.getBoundsInLocal().getMaxX()/2);
+							System.out.println("GREAT2");
+							Collections.swap(((HBox) focus.getParent().getNode()).getChildren(), i, focusIndex);
+						}
+					}
 				}
 
 			} else if (event.getEventType() == MouseEvent.MOUSE_RELEASED) {
